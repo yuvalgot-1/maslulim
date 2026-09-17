@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin:0; padding:0; background:#E8E6DE; }
+  body { font-family:'Heebo', system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#1F4D3D; text-decoration:none; }
+  a:hover { color:#0E2A21; }
+  * { box-sizing:border-box; }
+  ::-webkit-scrollbar { width:0; height:0; }
+  @keyframes slideUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;display:flex;justify-content:center;background:#E8E6DE;padding:0">
+  <div style="width:100%;max-width:430px;min-height:100vh;background:#F7F5EF;position:relative;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(18,32,27,.14);overflow:hidden">
+
+    <!-- header -->
+    <div style="background:#14342B;color:#F7F5EF;padding:14px 20px 16px;display:flex;flex-direction:column;gap:14px;flex:0 0 auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:22px;font-weight:900;letter-spacing:-.5px">מסלולים</span>
+          <span style="font-size:12px;font-weight:400;color:#9CBBA9">חוויה שלמה, לא רק נקודה</span>
+        </div>
+        <div onClick="{{ toggleMode }}" style="display:flex;align-items:center;gap:7px;background:rgba(247,245,239,.1);border:1px solid rgba(247,245,239,.18);padding:6px 11px;border-radius:999px;cursor:pointer;font-size:12px;font-weight:500;min-height:34px" style-hover="background:rgba(247,245,239,.2)">
+          <span style="width:7px;height:7px;border-radius:50%;background:{{ modeDotColor }}"></span>
+          <span>{{ modeLabel }}</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ isFeed }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;background:#F7F5EF;border-radius:14px;padding:12px 14px;min-height:48px">
+            <span style="color:#6B7C72;font-size:16px;font-weight:700">⌕</span>
+            <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="חפשו מסלול, מקום או אזור" dir="rtl" style="border:none;outline:none;background:transparent;font-family:'Heebo',sans-serif;font-size:15px;color:#12201B;width:100%" />
+          </div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin:0 -20px;padding-right:20px;padding-left:20px">
+            <sc-for list="{{ collections }}" as="col" hint-placeholder-count="4">
+              <div onClick="{{ col.onClick }}" style="{{ col.style }}">{{ col.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- body -->
+    <div style="flex:1 1 auto;overflow-y:auto;padding:0 0 96px">
+
+      <!-- FEED -->
+      <sc-if value="{{ isFeed }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:18px 20px 0;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <span style="font-size:15px;font-weight:700;color:#12201B">{{ feedTitle }}</span>
+            <span style="font-size:12px;color:#6B7C72">{{ feedCount }}</span>
+          </div>
+
+          <sc-for list="{{ feedRoutes }}" as="r" hint-placeholder-count="3">
+            <div onClick="{{ r.onOpen }}" style="background:#FFFFFF;border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 2px 14px rgba(18,32,27,.07);animation:slideUp .35s ease both">
+              <div style="position:relative;width:100%;height:188px">
+                <image-slot id="{{ r.slotId }}" shape="rect" placeholder="{{ r.slotHint }}"></image-slot>
+                <div style="position:absolute;inset:auto 0 0 0;height:96px;background:linear-gradient(to top, rgba(10,26,20,.82), rgba(10,26,20,0));pointer-events:none"></div>
+                <div style="position:absolute;bottom:12px;right:14px;left:14px;color:#F7F5EF;pointer-events:none;display:flex;flex-direction:column;gap:5px">
+                  <span style="font-size:19px;font-weight:700;line-height:1.25;text-wrap:pretty">{{ r.title }}</span>
+                  <span style="font-size:12.5px;color:#CFE0D5;font-weight:400">{{ r.chain }}</span>
+                </div>
+                <div style="position:absolute;top:12px;left:12px;background:rgba(247,245,239,.94);color:#14342B;font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:999px;pointer-events:none">{{ r.distance }}</div>
+              </div>
+              <div style="padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <div style="display:flex;align-items:center;gap:12px;font-size:12.5px;color:#4A5C52;font-weight:500">
+                  <span>{{ r.duration }}</span>
+                  <span style="color:#C9C6BA">•</span>
+                  <span>{{ r.stopCount }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#6B7C72">
+                    <span style="width:22px;height:22px;border-radius:50%;background:#DCE6DE;color:#1F4D3D;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ r.initials }}</span>
+                    <span>{{ r.author }}</span>
+                  </div>
+                  <div onClick="{{ r.onSave }}" style="{{ r.saveStyle }}">
+                    <span style="font-size:14px;line-height:1">{{ r.saveIcon }}</span>
+                    <span>{{ r.saveLabel }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ feedEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:40px 20px;text-align:center;color:#6B7C72;font-size:14px;line-height:1.7">לא מצאנו מסלול כזה.<br/>נסו שם של מקום, אזור או "עם ילדים".</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ROUTE DETAIL -->
+      <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column">
+          <div style="position:relative;width:100%;height:236px">
+            <image-slot id="{{ detail.slotId }}" shape="rect" placeholder="{{ detail.slotHint }}"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,26,20,.86) 0%, rgba(10,26,20,.1) 55%, rgba(10,26,20,.35) 100%);pointer-events:none"></div>
+            <div onClick="{{ goBack }}" style="position:absolute;top:14px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(247,245,239,.94);color:#14342B;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;cursor:pointer">›</div>
+            <div style="position:absolute;bottom:16px;right:20px;left:20px;color:#F7F5EF;pointer-events:none;display:flex;flex-direction:column;gap:7px">
+              <span style="font-size:13px;color:#CFE0D5;font-weight:500">{{ detail.area }}</span>
+              <span style="font-size:25px;font-weight:900;line-height:1.2;letter-spacing:-.4px;text-wrap:pretty">{{ detail.title }}</span>
+            </div>
+          </div>
+
+          <div style="display:flex;background:#FFFFFF;border-bottom:1px solid #EAE7DD">
+            <sc-for list="{{ detail.facts }}" as="f" hint-placeholder-count="3">
+              <div style="flex:1 1 0;padding:14px 8px;text-align:center;display:flex;flex-direction:column;gap:3px">
+                <span style="font-size:15px;font-weight:700;color:#12201B">{{ f.value }}</span>
+                <span style="font-size:11px;color:#6B7C72">{{ f.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding:18px 20px;display:flex;flex-direction:column;gap:18px">
+            <p style="margin:0;font-size:14.5px;line-height:1.75;color:#33443C;text-wrap:pretty">{{ detail.blurb }}</p>
+
+            <!-- map preview -->
+            <div style="position:relative;height:150px;border-radius:18px;overflow:hidden;background:#DDE5DC;border:1px solid #CCD8CE">
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(48deg, rgba(31,77,61,.05) 0 14px, rgba(31,77,61,0) 14px 28px)"></div>
+              <div style="position:absolute;top:0;bottom:0;right:22%;width:34%;background:rgba(122,160,200,.28)"></div>
+              <sc-for list="{{ detail.pins }}" as="p" hint-placeholder-count="3">
+                <div style="{{ p.style }}">{{ p.n }}</div>
+              </sc-for>
+              <div style="position:absolute;bottom:8px;left:10px;font-size:10.5px;color:#4A5C52;background:rgba(247,245,239,.85);padding:3px 8px;border-radius:6px">תצוגת מפה · {{ detail.area }}</div>
+            </div>
+
+            <!-- timeline -->
+            <div style="display:flex;flex-direction:column;gap:0">
+              <span style="font-size:15px;font-weight:700;color:#12201B;margin-bottom:12px">המסלול, תחנה אחר תחנה</span>
+              <sc-for list="{{ detail.stops }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;gap:14px;align-items:stretch">
+                  <div style="flex:0 0 26px;display:flex;flex-direction:column;align-items:center">
+                    <div style="width:26px;height:26px;border-radius:50%;background:#14342B;color:#F7F5EF;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto">{{ s.n }}</div>
+                    <div style="flex:1 1 auto;width:2px;background:#D6DED6;margin:4px 0"></div>
+                  </div>
+                  <div style="flex:1 1 auto;padding-bottom:14px;display:flex;flex-direction:column;gap:10px">
+                    <div style="background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(18,32,27,.06)">
+                      <div style="position:relative;width:100%;height:132px">
+                        <image-slot id="{{ s.slotId }}" shape="rect" placeholder="{{ s.slotHint }}"></image-slot>
+                        <div style="position:absolute;top:10px;right:10px;background:{{ s.tagBg }};color:#F7F5EF;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;pointer-events:none">{{ s.category }}</div>
+                      </div>
+                      <div style="padding:13px 14px;display:flex;flex-direction:column;gap:9px">
+                        <span style="font-size:16.5px;font-weight:700;color:#12201B;line-height:1.3">{{ s.name }}</span>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px">
+                          <span style="font-size:11.5px;color:#1F4D3D;background:#EAF0EA;padding:4px 9px;border-radius:7px;font-weight:500">⏱ {{ s.spend }}</span>
+                          <span style="font-size:11.5px;color:#4A5C52;background:#F2F0E8;padding:4px 9px;border-radius:7px;font-weight:500">{{ s.hours }}</span>
+                        </div>
+                        <p style="margin:0;font-size:13.5px;line-height:1.7;color:#4A5C52;text-wrap:pretty">{{ s.note }}</p>
+                      </div>
+                    </div>
+                    <sc-if value="{{ s.hasNext }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#6B7C72;padding-right:2px">
+                        <span style="font-size:13px">↓</span>
+                        <span>{{ s.travel }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;gap:10px;padding-top:4px">
+              <div style="flex:1 1 0;background:#14342B;color:#F7F5EF;text-align:center;padding:15px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;min-height:48px" style-hover="background:#0E2A21">שמירת המסלול</div>
+              <div style="flex:0 0 auto;background:#FFFFFF;border:1px solid #D9D5C9;color:#14342B;padding:15px 18px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;min-height:48px" style-hover="background:#F0EEE6">שיתוף</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- CREATOR: MY ROUTES -->
+      <sc-if value="{{ isMine }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:21px;font-weight:900;color:#12201B;letter-spacing:-.4px">המסלולים שלי</span>
+            <span style="font-size:13px;color:#6B7C72">{{ mineSummary }}</span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3">
+              <div style="flex:1 1 0;background:#FFFFFF;border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:3px;box-shadow:0 2px 10px rgba(18,32,27,.05)">
+                <span style="font-size:20px;font-weight:900;color:#14342B">{{ st.value }}</span>
+                <span style="font-size:11.5px;color:#6B7C72">{{ st.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-for list="{{ myRoutes }}" as="m" hint-placeholder-count="3">
+            <div style="background:#FFFFFF;border-radius:18px;padding:14px;display:flex;gap:13px;align-items:center;box-shadow:0 2px 12px rgba(18,32,27,.06)">
+              <div style="flex:0 0 74px;height:74px;border-radius:13px;overflow:hidden">
+                <image-slot id="{{ m.slotId }}" shape="rect" placeholder="תמונה"></image-slot>
+              </div>
+              <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:6px;min-width:0">
+                <span style="font-size:15.5px;font-weight:700;color:#12201B;line-height:1.3">{{ m.title }}</span>
+                <span style="font-size:12px;color:#6B7C72">{{ m.meta }}</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:{{ m.badgeBg }};color:{{ m.badgeColor }}">{{ m.status }}</span>
+                  <span onClick="{{ m.onToggle }}" style="font-size:11.5px;color:#1F4D3D;font-weight:600;cursor:pointer;text-decoration:underline">{{ m.action }}</span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- CREATOR: BUILDER -->
+      <sc-if value="{{ isBuild }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:21px;font-weight:900;color:#12201B;letter-spacing:-.4px">מסלול חדש</span>
+            <span style="font-size:13px;color:#6B7C72">{{ builderProgress }}</span>
+          </div>
+
+          <div style="background:#FFFFFF;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 12px rgba(18,32,27,.05)">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <span style="font-size:12.5px;font-weight:600;color:#4A5C52">שם המסלול</span>
+              <input value="{{ draftTitle }}" onChange="{{ onDraftTitle }}" placeholder="למשל: אגם, קפה ושקיעה" dir="rtl" style="border:1px solid #E2DED2;background:#FBFAF6;border-radius:12px;padding:13px 14px;font-family:'Heebo',sans-serif;font-size:15px;color:#12201B;outline:none;min-height:48px" />
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <span style="font-size:12.5px;font-weight:600;color:#4A5C52">אזור</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ areas }}" as="a" hint-placeholder-count="4">
+                  <div onClick="{{ a.onClick }}" style="{{ a.style }}">{{ a.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <span style="font-size:12.5px;font-weight:600;color:#4A5C52">תמונת שער</span>
+              <div style="height:130px;border-radius:13px;overflow:hidden">
+                <image-slot id="draft-cover" shape="rect" placeholder="גררו תמונה מהטיול"></image-slot>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:15px;font-weight:700;color:#12201B">תחנות ({{ draftCount }})</span>
+            <sc-for list="{{ draftStops }}" as="d" hint-placeholder-count="2">
+              <div style="background:#FFFFFF;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 10px rgba(18,32,27,.05)">
+                <div style="flex:0 0 26px;height:26px;border-radius:50%;background:#14342B;color:#F7F5EF;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ d.n }}</div>
+                <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <span style="font-size:15px;font-weight:700;color:#12201B">{{ d.name }}</span>
+                  <span style="font-size:12px;color:#6B7C72">{{ d.meta }}</span>
+                </div>
+                <span onClick="{{ d.onRemove }}" style="flex:0 0 auto;color:#A2AEA6;font-size:17px;cursor:pointer;padding:0 4px">×</span>
+              </div>
+            </sc-for>
+
+            <div style="background:#FFFFFF;border:1px dashed #C9CFC3;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:13px">
+              <span style="font-size:13.5px;font-weight:700;color:#12201B">הוספת תחנה</span>
+              <input value="{{ newName }}" onChange="{{ onNewName }}" placeholder="שם המקום" dir="rtl" style="border:1px solid #E2DED2;background:#FBFAF6;border-radius:11px;padding:12px 13px;font-family:'Heebo',sans-serif;font-size:14.5px;outline:none;min-height:46px" />
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ categoryChips }}" as="c" hint-placeholder-count="4">
+                  <div onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:9px">
+                <input value="{{ newSpend }}" onChange="{{ onNewSpend }}" placeholder="זמן בתחנה" dir="rtl" style="flex:1 1 0;border:1px solid #E2DED2;background:#FBFAF6;border-radius:11px;padding:12px 13px;font-family:'Heebo',sans-serif;font-size:14.5px;outline:none;min-height:46px;min-width:0" />
+                <input value="{{ newTravel }}" onChange="{{ onNewTravel }}" placeholder="נסיעה לתחנה הבאה" dir="rtl" style="flex:1 1 0;border:1px solid #E2DED2;background:#FBFAF6;border-radius:11px;padding:12px 13px;font-family:'Heebo',sans-serif;font-size:14.5px;outline:none;min-height:46px;min-width:0" />
+              </div>
+              <input value="{{ newHours }}" onChange="{{ onNewHours }}" placeholder="שעות פתיחה" dir="rtl" style="border:1px solid #E2DED2;background:#FBFAF6;border-radius:11px;padding:12px 13px;font-family:'Heebo',sans-serif;font-size:14.5px;outline:none;min-height:46px" />
+              <textarea value="{{ newNote }}" onChange="{{ onNewNote }}" placeholder="הערה שלכם – למה כדאי לעצור פה?" dir="rtl" rows="2" style="border:1px solid #E2DED2;background:#FBFAF6;border-radius:11px;padding:12px 13px;font-family:'Heebo',sans-serif;font-size:14.5px;outline:none;resize:none"></textarea>
+              <div onClick="{{ addStop }}" style="background:#EAF0EA;color:#14342B;text-align:center;padding:13px;border-radius:12px;font-size:14.5px;font-weight:700;cursor:pointer;min-height:46px" style-hover="background:#DCE6DE">הוספה למסלול</div>
+            </div>
+          </div>
+
+          <div onClick="{{ publish }}" style="background:{{ publishBg }};color:#F7F5EF;text-align:center;padding:16px;border-radius:14px;font-size:15.5px;font-weight:700;cursor:pointer;min-height:52px">{{ publishLabel }}</div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- bottom nav -->
+    <div style="position:sticky;bottom:0;background:rgba(247,245,239,.97);border-top:1px solid #E5E1D5;display:flex;padding:8px 10px 14px;flex:0 0 auto;backdrop-filter:blur(8px)">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+        <div onClick="{{ t.onClick }}" style="{{ t.style }}">
+          <span style="font-size:18px;line-height:1">{{ t.icon }}</span>
+          <span style="font-size:11px;font-weight:600">{{ t.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900}}">
+const CATS = {
+  nature: { label: 'טבע', bg: '#2E6B4F' },
+  cafe:   { label: 'קפה', bg: '#8A6A3C' },
+  food:   { label: 'אוכל', bg: '#A4503C' },
+  view:   { label: 'נוף', bg: '#3C6A8A' }
+};
+
+const ROUTES = [
+  {
+    id: 'kinneret', title: 'בוקר בכנרת, קפה בגליל וארוחה בשקיעה', area: 'גליל תחתון',
+    author: 'יואב', distance: '18 ק״מ ממך', duration: 'יום שלם · 6–7 שעות',
+    collections: ['day', 'water'], published: true, saves: 312,
+    blurb: 'מתחילים על המים כשעוד קריר, ממשיכים לקפה קטן בין המטעים, ומסיימים במסעדה עם נוף לעמק. מסלול רגוע, מתאים גם למי שלא אוהב ללכת הרבה.',
+    stops: [
+      { name: 'חוף דוגית', cat: 'nature', spend: 'שעתיים', hours: '07:00–19:00', travel: '14 דק׳ נסיעה', note: 'חוף שקט בצד המזרחי. בואו לפני 9:00 ותקבלו אותו כמעט לעצמכם.' },
+      { name: 'קפה במטע – כורסי', cat: 'cafe', spend: '45 דק׳', hours: '08:00–17:00', travel: '25 דק׳ נסיעה', note: 'מרפסת מוצלת, קפה טוב ומאפה שקדים. יש פינת מים לכלבים.' },
+      { name: 'מסעדת ארבל', cat: 'food', spend: 'שעה וחצי', hours: '12:00–22:30', travel: '', note: 'להזמין מקום ליד החלון בשעה שלפני השקיעה. המנות לשיתוף הן העיקר.' }
+    ]
+  },
+  {
+    id: 'golan', title: 'מעיינות הגולן, יקב ומרפסת נוף', area: 'רמת הגולן',
+    author: 'יואב', distance: '42 ק״מ ממך', duration: 'יום שלם · 5 שעות',
+    collections: ['day', 'water'], published: true, saves: 174,
+    blurb: 'מסלול מים קצר שמסתיים בטעימות ובנוף לחרמון. אפשר לעשות את הכל ברכב אחד, בלי הליכות ארוכות.',
+    stops: [
+      { name: 'נחל זוויתן התחתון', cat: 'nature', spend: 'שעה וחצי', hours: '08:00–16:00', travel: '20 דק׳ נסיעה', note: 'ירידה קלה למים, נעליים שנרטבות. בקיץ המים נעימים.' },
+      { name: 'יקב אודם', cat: 'cafe', spend: 'שעה', hours: '10:00–18:00', travel: '12 דק׳ נסיעה', note: 'טעימות בלי הזמנה מראש בימי חול. גם מי שלא שותה יקבל שם קפה מעולה.' },
+      { name: 'מרפסת נוף בנמרוד', cat: 'view', spend: '40 דק׳', hours: 'תמיד פתוח', travel: '', note: 'עצירה אחרונה לפני החזרה, בעיקר בשעה הזהובה.' }
+    ]
+  },
+  {
+    id: 'benshemen', title: 'יער בן שמן עם ילדים ופיצה בדרך חזרה', area: 'מרכז',
+    author: 'יואב', distance: '9 ק״מ ממך', duration: 'חצי יום · 3–4 שעות',
+    collections: ['kids', 'day'], published: true, saves: 96,
+    blurb: 'מסלול קצר ושטוח שעובד גם עם עגלה, עם מתקנים באמצע וסיום שכולם מסכימים עליו.',
+    stops: [
+      { name: 'חניון המעגלים', cat: 'nature', spend: 'שעה', hours: 'תמיד פתוח', travel: '7 דק׳ נסיעה', note: 'שולחנות פיקניק בצל ומסלול מעגלי קצר. יש שירותים בחניון.' },
+      { name: 'פינת חי בבן שמן', cat: 'nature', spend: '45 דק׳', hours: '09:00–16:00', travel: '15 דק׳ נסיעה', note: 'קטן אבל מספיק. אפשר להאכיל, כדאי להביא גזר.' },
+      { name: 'פיצה בשוהם', cat: 'food', spend: 'שעה', hours: '11:00–23:00', travel: '', note: 'יושבים בחוץ, הילדים רצים בכיכר וההורים סוף סוף יושבים.' }
+    ]
+  },
+  {
+    id: 'alexander', title: 'שקיעה בנחל אלכסנדר ודגים בחוף', area: 'שרון',
+    area2: true, author: 'יואב', distance: '23 ק״מ ממך', duration: 'אחר הצהריים · 3 שעות',
+    collections: ['water'], published: false, saves: 0,
+    blurb: 'מסלול קצר לאחר הצהריים: צבי מים, שקיעה ודגים על הגריל. עובד מעולה גם ביום חורף בהיר.',
+    stops: [
+      { name: 'גשר הצבים', cat: 'nature', spend: 'שעה', hours: 'תמיד פתוח', travel: '18 דק׳ נסיעה', note: 'הצבים יוצאים לרוב אחרי הצהריים. שביל נוח לגמרי.' },
+      { name: 'חוף בית ינאי', cat: 'view', spend: 'שעה', hours: 'תמיד פתוח', travel: '5 דק׳ נסיעה', note: 'נשארים לשקיעה מעל המצוק, לא על החוף עצמו.' },
+      { name: 'מסעדת דגים בחוף', cat: 'food', spend: 'שעה וחצי', hours: '12:00–22:00', travel: '', note: 'סלטים, דג שלם ולחם חם. שווה להזמין מראש בסופ״ש.' }
+    ]
+  }
+];
+
+const COLLECTIONS = [
+  { id: 'all', label: 'הכול' },
+  { id: 'day', label: 'טיולי יום' },
+  { id: 'kids', label: 'עם ילדים' },
+  { id: 'water', label: 'ליד המים' },
+  { id: 'rain', label: 'יום גשום' }
+];
+
+const AREAS = ['גליל', 'גולן', 'מרכז', 'שרון', 'ירושלים', 'נגב'];
+
+class Component extends DCLogic {
+  state = {
+    mode: 'public', screen: 'feed', openId: null, query: '', collection: 'all',
+    published: { kinneret: true, golan: true, benshemen: true, alexander: false },
+    saved: {},
+    draftTitle: '', draftArea: 'שרון', newName: '', newCat: 'nature', newSpend: '', newTravel: '', newHours: '', newNote: '',
+    draftStops: [
+      { name: 'בריכת המעיין', cat: 'nature', spend: 'שעה', travel: '10 דק׳ נסיעה' },
+      { name: 'קפה בשוק', cat: 'cafe', spend: '40 דק׳', travel: '' }
+    ],
+    justPublished: false
+  };
+
+  chip = (active) => ({
+    padding: '9px 15px', borderRadius: 999, fontSize: 13, fontWeight: active ? 700 : 500,
+    background: active ? '#14342B' : '#FFFFFF', color: active ? '#F7F5EF' : '#33443C',
+    border: active ? '1px solid #14342B' : '1px solid #E0DCD0', cursor: 'pointer',
+    whiteSpace: 'nowrap', minHeight: 40, display: 'flex', alignItems: 'center'
+  });
+
+  smallChip = (active) => ({
+    padding: '8px 13px', borderRadius: 10, fontSize: 12.5, fontWeight: active ? 700 : 500,
+    background: active ? '#DCE6DE' : '#FBFAF6', color: active ? '#14342B' : '#4A5C52',
+    border: active ? '1px solid #9CBBA9' : '1px solid #E2DED2', cursor: 'pointer',
+    minHeight: 40, display: 'flex', alignItems: 'center'
+  });
+
+  set = (k) => (e) => this.setState({ [k]: e.target.value });
+
+  go = (screen, openId) => () => this.setState({ screen, openId: openId ?? null });
+
+  renderVals() {
+    const s = this.state;
+    const creator = s.mode === 'creator';
+    const q = s.query.trim();
+    const visible = ROUTES.filter(r => s.published[r.id]);
+    const matched = visible.filter(r => {
+      const hay = r.title + ' ' + r.area + ' ' + r.stops.map(x => x.name).join(' ');
+      const okQ = !q || hay.indexOf(q) > -1;
+      const okC = s.collection === 'all' || r.collections.indexOf(s.collection) > -1;
+      return okQ && okC;
+    });
+    const open = ROUTES.find(r => r.id === s.openId);
+    const mine = ROUTES.map(r => ({
+      ...r, isPub: !!s.published[r.id]
+    }));
+    const pubCount = ROUTES.filter(r => s.published[r.id]).length;
+    const totalSaves = ROUTES.reduce((a, r) => a + (s.published[r.id] ? r.saves : 0), 0);
+
+    const vals = {
+      isFeed: s.screen === 'feed', isDetail: s.screen === 'detail' && !!open,
+      isMine: s.screen === 'mine', isBuild: s.screen === 'build',
+      modeLabel: creator ? 'מצב יוצר' : 'מצב גולש',
+      modeDotColor: creator ? '#E0B15C' : '#7FBF9A',
+      toggleMode: () => this.setState({ mode: creator ? 'public' : 'creator', screen: creator ? 'feed' : 'mine' }),
+      goBack: this.go('feed'),
+      query: s.query, onQuery: this.set('query'),
+      collections: COLLECTIONS.map(c => ({
+        label: c.label, style: this.chip(s.collection === c.id),
+        onClick: () => this.setState({ collection: c.id })
+      })),
+      feedTitle: q ? 'תוצאות חיפוש' : (s.collection === 'all' ? 'מומלץ באזור שלך' : COLLECTIONS.find(c => c.id === s.collection).label),
+      feedCount: matched.length + ' מסלולים',
+      feedEmpty: matched.length === 0,
+      feedRoutes: matched.map(r => ({
+        title: r.title, chain: r.stops.map(x => x.name).join(' → '),
+        distance: r.distance, duration: r.duration, stopCount: r.stops.length + ' תחנות',
+        author: r.author, initials: r.author.slice(0, 1),
+        slotId: 'cover-' + r.id, slotHint: 'תמונת שער · ' + r.area,
+        onOpen: this.go('detail', r.id),
+        saveIcon: s.saved[r.id] ? '♥' : '♡',
+        saveLabel: s.saved[r.id] ? 'שמור' : 'שמירה',
+        saveStyle: {
+          display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer',
+          padding: '7px 11px', borderRadius: 999, minHeight: 36, fontSize: 12, fontWeight: 600,
+          background: s.saved[r.id] ? '#DCE6DE' : '#F2F0E8',
+          border: s.saved[r.id] ? '1px solid #9CBBA9' : '1px solid #E5E1D5',
+          color: s.saved[r.id] ? '#14342B' : '#4A5C52'
+        },
+        onSave: (e) => { e.stopPropagation(); this.setState(st => ({ saved: { ...st.saved, [r.id]: !st.saved[r.id] } })); }
+      })),
+      tabs: (creator
+        ? [{ id: 'mine', label: 'המסלולים שלי', icon: '☰' }, { id: 'build', label: 'מסלול חדש', icon: '＋' }, { id: 'feed', label: 'תצוגה ציבורית', icon: '◎' }]
+        : [{ id: 'feed', label: 'גלו מסלולים', icon: '◎' }, { id: 'saved', label: 'שמורים', icon: '♡' }]
+      ).map(t => ({
+        label: t.label, icon: t.icon,
+        style: {
+          flex: '1 1 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+          padding: '8px 4px', minHeight: 48, cursor: 'pointer', borderRadius: 12,
+          color: (s.screen === t.id || (t.id === 'feed' && s.screen === 'detail')) ? '#14342B' : '#9AA69E'
+        },
+        onClick: this.go(t.id === 'saved' ? 'feed' : t.id)
+      })),
+      mineSummary: pubCount + ' מפורסמים · ' + totalSaves + ' שמירות',
+      stats: [
+        { value: pubCount, label: 'מפורסמים' },
+        { value: totalSaves, label: 'שמירות' },
+        { value: ROUTES.length - pubCount, label: 'טיוטות' }
+      ],
+      myRoutes: mine.map(r => ({
+        title: r.title, meta: r.area + ' · ' + r.stops.length + ' תחנות · ' + r.duration,
+        slotId: 'cover-' + r.id,
+        status: r.isPub ? 'מפורסם' : 'טיוטה',
+        badgeBg: r.isPub ? '#DCE6DE' : '#F2E8D5', badgeColor: r.isPub ? '#14342B' : '#7A5B22',
+        action: r.isPub ? 'הסרה מפרסום' : 'פרסום עכשיו',
+        onToggle: () => this.setState(st => ({ published: { ...st.published, [r.id]: !st.published[r.id] } }))
+      })),
+      areas: AREAS.map(a => ({ label: a, style: this.smallChip(s.draftArea === a), onClick: () => this.setState({ draftArea: a }) })),
+      categoryChips: Object.keys(CATS).map(k => ({
+        label: CATS[k].label, style: this.smallChip(s.newCat === k), onClick: () => this.setState({ newCat: k })
+      })),
+      draftTitle: s.draftTitle, onDraftTitle: this.set('draftTitle'),
+      newName: s.newName, onNewName: this.set('newName'),
+      newSpend: s.newSpend, onNewSpend: this.set('newSpend'),
+      newTravel: s.newTravel, onNewTravel: this.set('newTravel'),
+      newHours: s.newHours, onNewHours: this.set('newHours'),
+      newNote: s.newNote, onNewNote: this.set('newNote'),
+      draftCount: s.draftStops.length,
+      builderProgress: s.draftStops.length < 2 ? 'הוסיפו לפחות שתי תחנות כדי לפרסם' : 'אפשר לפרסם – ' + s.draftStops.length + ' תחנות במסלול',
+      draftStops: s.draftStops.map((d, i) => ({
+        n: i + 1, name: d.name,
+        meta: [CATS[d.cat].label, d.spend, d.travel].filter(Boolean).join(' · '),
+        onRemove: () => this.setState(st => ({ draftStops: st.draftStops.filter((_, j) => j !== i) }))
+      })),
+      addStop: () => {
+        if (!s.newName.trim()) return;
+        this.setState(st => ({
+          draftStops: st.draftStops.concat([{ name: st.newName.trim(), cat: st.newCat, spend: st.newSpend || 'לא צוין', travel: st.newTravel }]),
+          newName: '', newSpend: '', newTravel: '', newHours: '', newNote: ''
+        }));
+      },
+      publishBg: s.draftStops.length >= 2 ? '#14342B' : '#9AA69E',
+      publishLabel: s.justPublished ? 'פורסם ✓' : 'פרסום המסלול',
+      publish: () => {
+        if (s.draftStops.length < 2) return;
+        this.setState({ justPublished: true });
+        setTimeout(() => this.setState({ justPublished: false, screen: 'mine' }), 900);
+      }
+    };
+
+    if (open) {
+      vals.detail = {
+        title: open.title, area: open.area, blurb: open.blurb,
+        slotId: 'cover-' + open.id, slotHint: 'תמונת שער · ' + open.area,
+        facts: [
+          { value: open.duration.split(' · ')[1] || open.duration, label: 'משך המסלול' },
+          { value: open.stops.length, label: 'תחנות' },
+          { value: open.distance.replace(' ממך', ''), label: 'מרחק ממך' }
+        ],
+        pins: open.stops.map((st, i) => ({
+          n: i + 1,
+          style: {
+            position: 'absolute', width: 24, height: 24, borderRadius: '50%',
+            background: '#14342B', color: '#F7F5EF', fontSize: 11, fontWeight: 700,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 6px rgba(10,26,20,.3)',
+            top: [34, 64, 96][i % 3] + 'px', right: [30, 46, 62][i % 3] + '%'
+          }
+        })),
+        stops: open.stops.map((st, i) => ({
+          n: i + 1, name: st.name, spend: st.spend, hours: st.hours, note: st.note,
+          category: CATS[st.cat].label, tagBg: CATS[st.cat].bg,
+          slotId: 'stop-' + open.id + '-' + i, slotHint: st.name,
+          hasNext: i < open.stops.length - 1, travel: st.travel
+        }))
+      };
+    }
+    return vals;
+  }
+}
+
+</script>
+</body>
+</html>
