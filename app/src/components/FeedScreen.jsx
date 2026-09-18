@@ -1,6 +1,6 @@
 import RouteCard from './RouteCard.jsx';
 
-export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, empty }) {
+export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, empty, onOpenTerms }) {
   return (
     <div className="feed">
       <div className="feed__title-row">
@@ -17,6 +17,10 @@ export default function FeedScreen({ title, count, routes, saved, onOpen, onTogg
           לא מצאנו מסלול כזה.<br />נסו שם של מקום, אזור או "עם ילדים".
         </div>
       )}
+
+      <span className="link-action" style={{ display: 'block', textAlign: 'center', margin: '8px 0 4px' }} onClick={onOpenTerms}>
+        תנאי שימוש
+      </span>
     </div>
   );
 }

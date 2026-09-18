@@ -11,6 +11,8 @@ import RouteDetailScreen from './components/RouteDetailScreen.jsx';
 import MyRoutesScreen from './components/MyRoutesScreen.jsx';
 import BuilderScreen from './components/BuilderScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
+import OnboardingModal from './components/OnboardingModal.jsx';
+import TermsScreen from './components/TermsScreen.jsx';
 
 const DEFAULT_DRAFT = {
   editingId: null,
@@ -36,6 +38,7 @@ export default function App() {
   const [saved, setSaved] = useLocalStorageState('saved', {});
   const [mode, setMode] = useLocalStorageState('mode', 'public');
   const [draft, setDraft] = useLocalStorageState('draft', DEFAULT_DRAFT);
+  const [onboardingSeen, setOnboardingSeen] = useLocalStorageState('onboardingSeen', false);
 
   const [screen, setScreen] = useState('feed');
   const [openId, setOpenId] = useState(null);
@@ -101,6 +104,10 @@ export default function App() {
   function navigate(id) {
     if (id === 'saved') { setScreen('saved'); return; }
     setScreen(id);
+  }
+
+  function openTerms() {
+    setScreen('terms');
   }
 
   function toggleSave(id) {
@@ -281,8 +288,11 @@ export default function App() {
               onOpen={openRoute}
               onToggleSave={toggleSave}
               empty={matched.length === 0}
+              onOpenTerms={openTerms}
             />
           )}
+
+          {screen === 'terms' && <TermsScreen onBack={() => setScreen('feed')} />}
 
           {screen === 'saved' && (
             <SavedScreen routes={savedRoutes} saved={saved} onOpen={openRoute} onToggleSave={toggleSave} />
@@ -332,6 +342,13 @@ export default function App() {
         <BottomNav mode={mode} screen={screen} onNavigate={navigate} />
 
         {toast && <div className="toast">{toast}</div>}
+
+        {!isCreator && !onboardingSeen && (
+          <OnboardingModal
+            onDismiss={() => setOnboardingSeen(true)}
+            onOpenTerms={() => { setOnboardingSeen(true); openTerms(); }}
+          />
+        )}
       </div>
     </div>
   );
