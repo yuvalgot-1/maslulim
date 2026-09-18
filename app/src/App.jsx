@@ -15,6 +15,7 @@ import AccountScreen from './components/AccountScreen.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import InstallScreen from './components/InstallScreen.jsx';
 import RecoveryScreen from './components/RecoveryScreen.jsx';
+import GuideScreen from './components/GuideScreen.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
 
 // rarely-used screens are loaded on demand to keep the first page load small
@@ -479,6 +480,10 @@ export default function App() {
           )}
 
           {screen === 'terms' && <TermsScreen onBack={() => setScreen('feed')} />}
+
+          {screen === 'guide' && (
+            <GuideScreen onBack={() => setScreen('feed')} onOpenInstall={() => setScreen('install')} />
+          )}
 
           {screen === 'install' && (
             <InstallScreen
