@@ -6,6 +6,7 @@ export default function BottomNav({ mode, screen, onNavigate }) {
         { id: 'mine', label: 'המסלולים שלי', icon: '☰' },
         { id: 'build', label: 'מסלול חדש', icon: '＋' },
         { id: 'feed', label: 'תצוגה ציבורית', icon: '◎' },
+        { id: 'account', label: 'חשבון', icon: '☺' },
       ]
     : [
         { id: 'feed', label: 'גלו מסלולים', icon: '◎' },

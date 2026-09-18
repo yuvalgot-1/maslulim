@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { signIn, signUp } from '../lib/accountApi.js';
 import { press } from '../utils/a11y.js';
 
-export default function AccountScreen({ session, isCreator, onSignOut, onOpenInstall, onSwitchToCreator }) {
+export default function AccountScreen({ session, isCreator, creatorMode, onSignOut, onOpenInstall, onSwitchToCreator, onSwitchToPublic }) {
   const [tab, setTab] = useState('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,9 +47,11 @@ export default function AccountScreen({ session, isCreator, onSignOut, onOpenIns
           <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             המסלולים ששמרתם ♡ נשמרים בחשבון וזמינים בכל מכשיר.
           </span>
-          {isCreator && (
+          {isCreator && (creatorMode ? (
+            <span className="link-action" {...press(onSwitchToPublic)}>מעבר למצב גולש</span>
+          ) : (
             <span className="link-action" {...press(onSwitchToCreator)}>מעבר למצב יוצר</span>
-          )}
+          ))}
           <button
             type="button"
             className="publish-btn"

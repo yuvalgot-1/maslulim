@@ -459,9 +459,11 @@ export default function App() {
             <AccountScreen
               session={session}
               isCreator={!!creatorName}
-              onSignOut={signOut}
+              creatorMode={isCreator}
+              onSignOut={isCreator ? logout : signOut}
               onOpenInstall={() => setScreen('install')}
               onSwitchToCreator={() => { setMode('creator'); setScreen('mine'); }}
+              onSwitchToPublic={() => { setMode('public'); setScreen('feed'); }}
             />
           )}
 
