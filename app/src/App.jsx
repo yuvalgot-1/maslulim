@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState.js';
 import { supabase } from './lib/supabase.js';
-import { fetchRoutes, insertRoute, updateRoute } from './lib/routesApi.js';
+import { fetchRoutes, insertRoute, updateRoute, deleteRoute } from './lib/routesApi.js';
 import { COLLECTIONS } from './data/routes.js';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -124,6 +124,27 @@ export default function App() {
       setToast('העדכון נכשל');
       setTimeout(() => setToast(''), 1800);
     }
+  }
+
+  async function deleteRouteHandler(id) {
+    const route = routes.find((r) => r.id === id);
+    if (!route) return;
+    const ok = window.confirm(`למחוק לצמיתות את "${route.title}"? לא ניתן לשחזר את זה.`);
+    if (!ok) return;
+    try {
+      await deleteRoute(id);
+    } catch {
+      setToast('המחיקה נכשלה');
+      setTimeout(() => setToast(''), 1800);
+      return;
+    }
+    try {
+      const imagePaths = ['cover-' + id, ...route.stops.map((_, i) => 'stop-' + id + '-' + i)];
+      await supabase.storage.from('route-images').remove(imagePaths);
+    } catch {
+      // route is already deleted - leftover images are harmless
+    }
+    await loadRoutes();
   }
 
   function toggleDraftCollection(id) {
@@ -311,7 +332,13 @@ export default function App() {
 
           {screen === 'mine' && (
             creatorReady ? (
-              <MyRoutesScreen routes={routes} onTogglePublish={togglePublish} onEdit={startEdit} onLogout={logout} />
+              <MyRoutesScreen
+                routes={routes}
+                onTogglePublish={togglePublish}
+                onEdit={startEdit}
+                onDelete={deleteRouteHandler}
+                onLogout={logout}
+              />
             ) : (
               <LoginScreen onCancel={cancelLogin} />
             )

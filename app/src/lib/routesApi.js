@@ -18,3 +18,8 @@ export async function updateRoute(id, fields) {
   const { error } = await supabase.from('routes').update(fields).eq('id', id);
   if (error) throw error;
 }
+
+export async function deleteRoute(id) {
+  const { error } = await supabase.from('routes').delete().eq('id', id);
+  if (error) throw error;
+}

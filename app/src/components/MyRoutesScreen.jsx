@@ -1,6 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 
-export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onLogout }) {
+export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDelete, onLogout }) {
   const pubCount = routes.filter((r) => r.published).length;
   const stats = [
     { value: pubCount, label: 'מפורסמים' },
@@ -40,6 +40,9 @@ export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onLogo
                 <button className="link-action" onClick={() => onEdit(r)}>עריכה</button>
                 <button className="link-action" onClick={() => onTogglePublish(r.id)}>
                   {isPub ? 'הסרה מפרסום' : 'פרסום עכשיו'}
+                </button>
+                <button className="link-action" style={{ color: '#A4503C' }} onClick={() => onDelete(r.id)}>
+                  מחיקה
                 </button>
               </div>
             </div>
