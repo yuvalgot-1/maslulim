@@ -1,6 +1,7 @@
 import ImageSlot from './ImageSlot.jsx';
 import { getCategory } from '../data/routes.js';
 import { googleMapsUrl, wazeUrl, routeDirectionsUrl } from '../utils/maps.js';
+import { press } from '../utils/a11y.js';
 
 export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenProfile, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
   const facts = [
@@ -36,7 +37,7 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenPr
       </div>
 
       <div className="detail-content">
-        <div className="detail-author" onClick={() => onOpenProfile(route.owner_id)}>
+        <div className="detail-author" {...press(() => onOpenProfile(route.owner_id))}>
           <span className="route-card__initials">{route.author.slice(0, 1)}</span>
           <span>מאת <b>{route.author}</b> · כל המסלולים ›</span>
         </div>
@@ -101,10 +102,10 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenPr
         </div>
 
         <div className="detail-actions">
-          <div className="btn-primary" onClick={() => onToggleSave(route.id)}>
+          <div className="btn-primary" {...press(() => onToggleSave(route.id))}>
             {saved ? 'נשמר ✓' : 'שמירת המסלול'}
           </div>
-          <div className="btn-secondary" onClick={() => onShare(route)}>שיתוף</div>
+          <div className="btn-secondary" {...press(() => onShare(route))}>שיתוף</div>
         </div>
       </div>
     </div>

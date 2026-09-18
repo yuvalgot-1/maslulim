@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
+import { press } from '../utils/a11y.js';
 
 export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut }) {
   const [email, setEmail] = useState('');
@@ -32,8 +33,8 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
                 החשבון <b dir="ltr">{signedInAs}</b> אינו מורשה ליצור מסלולים.
                 מצב יוצר פתוח כרגע רק ליוצרים שאושרו.
               </span>
-              <span className="link-action" onClick={onCancel}>חזרה לגלישה</span>
-              <span className="link-action" onClick={onSignOut}>התנתקות</span>
+              <span className="link-action" {...press(onCancel)}>חזרה לגלישה</span>
+              <span className="link-action" {...press(onSignOut)}>התנתקות</span>
             </>
           )}
         </div>
@@ -48,7 +49,7 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
       </div>
 
       <form className="builder-card" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div className="field">
+        <label className="field">
           <span className="field__label">אימייל</span>
           <input
             type="email"
@@ -58,8 +59,8 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
             autoComplete="username"
             required
           />
-        </div>
-        <div className="field">
+        </label>
+        <label className="field">
           <span className="field__label">סיסמה</span>
           <input
             type="password"
@@ -69,7 +70,7 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
             autoComplete="current-password"
             required
           />
-        </div>
+        </label>
 
         {error && <span style={{ fontSize: 13, color: '#A4503C' }}>{error}</span>}
 
@@ -80,7 +81,7 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
         >
           {loading ? 'מתחבר...' : 'התחברות'}
         </button>
-        <span className="link-action" style={{ textAlign: 'center' }} onClick={onCancel}>
+        <span className="link-action" style={{ textAlign: 'center' }} {...press(onCancel)}>
           ביטול
         </span>
       </form>

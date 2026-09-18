@@ -1,3 +1,5 @@
+import { press } from '../utils/a11y.js';
+
 export default function BottomNav({ mode, screen, onNavigate }) {
   const tabs = mode === 'creator'
     ? [
@@ -12,20 +14,21 @@ export default function BottomNav({ mode, screen, onNavigate }) {
       ];
 
   return (
-    <div className="bottom-nav">
+    <nav className="bottom-nav" aria-label="ניווט ראשי">
       {tabs.map((t) => {
         const active = screen === t.id || (t.id === 'feed' && (screen === 'detail' || screen === 'profile'));
         return (
           <div
             key={t.id}
             className={'bottom-nav__item' + (active ? ' bottom-nav__item--active' : '')}
-            onClick={() => onNavigate(t.id)}
+            aria-current={active ? 'page' : undefined}
+            {...press(() => onNavigate(t.id))}
           >
             <span className="bottom-nav__icon">{t.icon}</span>
             <span className="bottom-nav__label">{t.label}</span>
           </div>
         );
       })}
-    </div>
+    </nav>
   );
 }

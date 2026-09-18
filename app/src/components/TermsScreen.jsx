@@ -1,9 +1,11 @@
+import { press } from '../utils/a11y.js';
+
 export default function TermsScreen({ onBack }) {
   return (
     <div className="builder">
       <div className="builder__heading">
         <span className="builder__title">תנאי שימוש</span>
-        <span className="link-action" style={{ marginTop: 6 }} onClick={onBack}>
+        <span className="link-action" style={{ marginTop: 6 }} {...press(onBack)}>
           חזרה
         </span>
       </div>

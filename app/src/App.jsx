@@ -1,22 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState.js';
 import { supabase } from './lib/supabase.js';
 import { fetchRoutes, insertRoute, updateRoute, deleteRoute } from './lib/routesApi.js';
 import { fetchCreatorName, fetchSavedIds, addSavedRoutes, removeSavedRoute } from './lib/accountApi.js';
 import { COLLECTIONS } from './data/routes.js';
+import { filterRoutes, hasActiveFilters } from './utils/filterRoutes.js';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import FeedScreen from './components/FeedScreen.jsx';
 import SavedScreen from './components/SavedScreen.jsx';
 import RouteDetailScreen from './components/RouteDetailScreen.jsx';
-import MyRoutesScreen from './components/MyRoutesScreen.jsx';
-import BuilderScreen from './components/BuilderScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import AccountScreen from './components/AccountScreen.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import InstallScreen from './components/InstallScreen.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
-import TermsScreen from './components/TermsScreen.jsx';
+
+// rarely-used screens are loaded on demand to keep the first page load small
+const MyRoutesScreen = lazy(() => import('./components/MyRoutesScreen.jsx'));
+const BuilderScreen = lazy(() => import('./components/BuilderScreen.jsx'));
+const TermsScreen = lazy(() => import('./components/TermsScreen.jsx'));
 
 const ROUTE_HASH = /^#\/route\/(.+)$/;
 
@@ -358,16 +361,13 @@ export default function App() {
 
   const q = query.trim();
   const visibleRoutes = useMemo(() => routes.filter((r) => r.published), [routes]);
-  const matched = useMemo(() => visibleRoutes.filter((r) => {
-    const hay = r.title + ' ' + r.area + ' ' + r.stops.map((x) => x.name).join(' ');
-    const okQ = !q || hay.indexOf(q) > -1;
-    const okC = collection === 'all' || r.collections.indexOf(collection) > -1;
-    const okA = areaFilter === 'all' || r.area.indexOf(areaFilter) > -1;
-    const okS = stopCat === 'all' || r.stops.some((x) => x.cat === stopCat);
-    return okQ && okC && okA && okS;
-  }), [visibleRoutes, q, collection, areaFilter, stopCat]);
+  const filters = { query, collection, area: areaFilter, stopCat };
+  const matched = useMemo(
+    () => filterRoutes(routes, { query, collection, area: areaFilter, stopCat }),
+    [routes, query, collection, areaFilter, stopCat],
+  );
 
-  const hasFilters = !!q || collection !== 'all' || areaFilter !== 'all' || stopCat !== 'all';
+  const hasFilters = hasActiveFilters(filters);
   function resetFilters() {
     setQuery('');
     setCollection('all');
@@ -427,6 +427,7 @@ export default function App() {
         />
 
         <div className="app-body">
+          <Suspense fallback={null}>
           {screen === 'feed' && (
             <FeedScreen
               title={feedTitle}
@@ -528,6 +529,7 @@ export default function App() {
               <LoginScreen onCancel={cancelLogin} signedInAs={session?.user?.email} checking={creatorName === undefined} onSignOut={logout} />
             )
           )}
+          </Suspense>
         </div>
 
         <BottomNav mode={mode} screen={screen} onNavigate={navigate} />

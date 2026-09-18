@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 
-const MAX_FILE_BYTES = 4 * 1024 * 1024;
+import { resizeImage } from '../utils/resizeImage.js';
+import { press } from '../utils/a11y.js';
+
+// Checked before resizing - phone photos are big, and are shrunk before upload.
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
 const BUCKET = 'route-images';
 
 function publicUrlFor(path) {
@@ -35,9 +39,10 @@ export default function ImageSlot({ id, placeholder, className, height, editable
     setTooLarge(false);
     setUploadError(false);
     setUploading(true);
-    const { error } = await supabase.storage.from(BUCKET).upload(id, file, {
+    const toUpload = await resizeImage(file);
+    const { error } = await supabase.storage.from(BUCKET).upload(id, toUpload, {
       upsert: true,
-      contentType: file.type,
+      contentType: toUpload.type || file.type,
     });
     setUploading(false);
     if (error) {
@@ -56,7 +61,8 @@ export default function ImageSlot({ id, placeholder, className, height, editable
     <div
       className={`image-slot ${dragOver ? 'image-slot--drag' : ''} ${className || ''}`}
       style={height ? { height } : undefined}
-      onClick={() => editable && inputRef.current?.click()}
+      aria-label={editable ? 'העלאת תמונה' : undefined}
+      {...press(editable ? () => inputRef.current?.click() : undefined)}
       onDragOver={(e) => { if (editable) { e.preventDefault(); setDragOver(true); } }}
       onDragLeave={() => setDragOver(false)}
       onDrop={(e) => {
@@ -80,7 +86,9 @@ export default function ImageSlot({ id, placeholder, className, height, editable
           src={src}
           alt=""
           className="image-slot__img"
-          style={{ display: loaded ? 'block' : 'none' }}
+          loading="lazy"
+          decoding="async"
+          style={{ opacity: loaded ? 1 : 0 }}
           onLoad={() => setLoaded(true)}
           onError={() => setBroken(true)}
         />

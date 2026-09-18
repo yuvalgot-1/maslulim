@@ -1,3 +1,5 @@
+import { press } from '../utils/a11y.js';
+
 export default function InstallScreen({ onBack, installPrompt, onInstall, installed }) {
   const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
 
@@ -51,7 +53,7 @@ export default function InstallScreen({ onBack, installPrompt, onInstall, instal
 
       {isIos ? <>{ios}{android}</> : <>{android}{ios}</>}
 
-      <span className="link-action" style={{ textAlign: 'center' }} onClick={onBack}>חזרה</span>
+      <span className="link-action" style={{ textAlign: 'center' }} {...press(onBack)}>חזרה</span>
     </div>
   );
 }

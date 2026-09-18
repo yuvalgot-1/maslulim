@@ -1,5 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 import { CATEGORIES, COLLECTIONS, getCategory } from '../data/routes.js';
+import { press } from '../utils/a11y.js';
 
 function categoryCounts(stops) {
   const counts = {};
@@ -9,7 +10,7 @@ function categoryCounts(stops) {
 
 export default function RouteCard({ route, saved, onOpen, onToggleSave, onOpenProfile }) {
   return (
-    <div className="route-card" onClick={() => onOpen(route.id)}>
+    <div className="route-card" {...press(() => onOpen(route.id))}>
       <div className="route-card__cover">
         <ImageSlot id={'cover-' + route.id} placeholder={'תמונת שער · ' + route.area} known={!!route.has_cover} />
         <div className="route-card__scrim" />
@@ -39,14 +40,14 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave, onOpenPr
         <div className="route-card__right">
           <div
             className={'route-card__author' + (onOpenProfile ? ' route-card__author--link' : '')}
-            onClick={onOpenProfile ? (e) => { e.stopPropagation(); onOpenProfile(route.owner_id); } : undefined}
+            {...press(onOpenProfile ? (e) => { e.stopPropagation(); onOpenProfile(route.owner_id); } : undefined)}
           >
             <span className="route-card__initials">{route.author.slice(0, 1)}</span>
             <span>{route.author}</span>
           </div>
           <div
             className={'save-btn' + (saved ? ' save-btn--active' : '')}
-            onClick={(e) => { e.stopPropagation(); onToggleSave(route.id); }}
+            {...press((e) => { e.stopPropagation(); onToggleSave(route.id); })}
           >
             <span className="save-btn__icon">{saved ? '♥' : '♡'}</span>
             <span>{saved ? 'שמור' : 'שמירה'}</span>

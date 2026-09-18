@@ -1,4 +1,5 @@
 import ImageSlot from './ImageSlot.jsx';
+import { press } from '../utils/a11y.js';
 
 export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDelete, onLogout, onCoverUploaded }) {
   const pubCount = routes.filter((r) => r.published).length;
@@ -56,7 +57,7 @@ export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDele
         );
       })}
 
-      <span className="link-action" style={{ alignSelf: 'center', marginTop: 8 }} onClick={onLogout}>
+      <span className="link-action" style={{ alignSelf: 'center', marginTop: 8 }} {...press(onLogout)}>
         התנתקות
       </span>
     </div>

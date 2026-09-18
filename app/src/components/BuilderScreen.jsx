@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ImageSlot from './ImageSlot.jsx';
 import { AREAS, CATEGORIES, COLLECTIONS, DIFFICULTY_LEVELS, getCategory } from '../data/routes.js';
 import { isSafeHttpUrl } from '../utils/url.js';
+import { press } from '../utils/a11y.js';
 
 const EMPTY_STOP = {
   name: '',
@@ -70,64 +71,64 @@ export default function BuilderScreen({
         <span className="builder__title">{isEditing ? 'עריכת מסלול' : 'מסלול חדש'}</span>
         <span className="builder__progress">{progress}</span>
         {isEditing && (
-          <span className="link-action" style={{ marginTop: 6 }} onClick={onCancelEdit}>
+          <span className="link-action" style={{ marginTop: 6 }} {...press(onCancelEdit)}>
             ביטול עריכה
           </span>
         )}
       </div>
 
       <div className="builder-card">
-        <div className="field">
+        <label className="field">
           <span className="field__label">שם המסלול</span>
           <input
             value={draft.title}
             onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="למשל: אגם, קפה ושקיעה"
+            placeholder="למשל: אגם, קפה ושקיעה" aria-label="למשל: אגם, קפה ושקיעה"
             dir="rtl"
           />
-        </div>
-        <div className="field">
+        </label>
+        <div className="field" role="group">
           <span className="field__label">אזור</span>
           <div className="chips-wrap">
             {AREAS.map((a) => (
               <div
                 key={a}
-                className={'small-chip' + (draft.area === a ? ' small-chip--active' : '')}
-                onClick={() => onAreaChange(a)}
+                className={'small-chip' + (draft.area === a ? ' small-chip--active' : '')} aria-pressed={draft.area === a}
+                {...press(() => onAreaChange(a))}
               >
                 {a}
               </div>
             ))}
           </div>
         </div>
-        <div className="field">
+        <div className="field" role="group">
           <span className="field__label">תמונת שער</span>
           <div className="cover-slot">
             <ImageSlot
               id={draft.editingId ? 'cover-' + draft.editingId : 'draft-cover'}
-              placeholder="גררו תמונה מהטיול"
+              placeholder="גררו תמונה מהטיול" aria-label="גררו תמונה מהטיול"
               editable
               onUploaded={draft.editingId ? onCoverUploaded : undefined}
             />
           </div>
         </div>
-        <div className="field">
+        <label className="field">
           <span className="field__label">משך</span>
           <input
             value={draft.duration}
             onChange={(e) => onDurationChange(e.target.value)}
-            placeholder="למשל: חצי יום · 3–4 שעות"
+            placeholder="למשל: חצי יום · 3–4 שעות" aria-label="למשל: חצי יום · 3–4 שעות"
             dir="rtl"
           />
-        </div>
-        <div className="field">
+        </label>
+        <div className="field" role="group">
           <span className="field__label">מתאים ל...</span>
           <div className="chips-wrap">
             {DRAFT_COLLECTIONS.map((c) => (
               <div
                 key={c.id}
                 className={'small-chip' + (draft.collections.includes(c.id) ? ' small-chip--active' : '')}
-                onClick={() => onToggleCollection(c.id)}
+                {...press(() => onToggleCollection(c.id))}
               >
                 {c.label}
               </div>
@@ -177,15 +178,15 @@ export default function BuilderScreen({
           <input
             value={newStop.name}
             onChange={(e) => setNewStop((s) => ({ ...s, name: e.target.value }))}
-            placeholder="שם המקום"
+            placeholder="שם המקום" aria-label="שם המקום"
             dir="rtl"
           />
           <div className="chips-wrap">
             {Object.keys(CATEGORIES).map((k) => (
               <div
                 key={k}
-                className={'small-chip' + (newStop.cat === k ? ' small-chip--active' : '')}
-                onClick={() => setNewStop((s) => ({ ...s, cat: k }))}
+                className={'small-chip' + (newStop.cat === k ? ' small-chip--active' : '')} aria-pressed={newStop.cat === k}
+                {...press(() => setNewStop((s) => ({ ...s, cat: k })))}
               >
                 {CATEGORIES[k].label}
               </div>
@@ -196,8 +197,8 @@ export default function BuilderScreen({
               {DIFFICULTY_LEVELS.map((level) => (
                 <div
                   key={level}
-                  className={'small-chip' + (newStop.difficulty === level ? ' small-chip--active' : '')}
-                  onClick={() => setNewStop((s) => ({ ...s, difficulty: level }))}
+                  className={'small-chip' + (newStop.difficulty === level ? ' small-chip--active' : '')} aria-pressed={newStop.difficulty === level}
+                  {...press(() => setNewStop((s) => ({ ...s, difficulty: level })))}
                 >
                   {level}
                 </div>
@@ -208,13 +209,13 @@ export default function BuilderScreen({
             <input
               value={newStop.spend}
               onChange={(e) => setNewStop((s) => ({ ...s, spend: e.target.value }))}
-              placeholder="זמן בתחנה"
+              placeholder="זמן בתחנה" aria-label="זמן בתחנה"
               dir="rtl"
             />
             <input
               value={newStop.travel}
               onChange={(e) => setNewStop((s) => ({ ...s, travel: e.target.value }))}
-              placeholder="נסיעה לתחנה הבאה"
+              placeholder="נסיעה לתחנה הבאה" aria-label="נסיעה לתחנה הבאה"
               dir="rtl"
             />
           </div>
@@ -222,13 +223,13 @@ export default function BuilderScreen({
             <input
               value={newStop.hours}
               onChange={(e) => setNewStop((s) => ({ ...s, hours: e.target.value }))}
-              placeholder="שעות פתיחה"
+              placeholder="שעות פתיחה" aria-label="שעות פתיחה"
               dir="rtl"
             />
             <input
               value={newStop.price}
               onChange={(e) => setNewStop((s) => ({ ...s, price: e.target.value }))}
-              placeholder="עלות, למשל: 30 ש״ח לכניסה"
+              placeholder="עלות, למשל: 30 ש״ח לכניסה" aria-label="עלות, למשל: 30 ש״ח לכניסה"
               dir="rtl"
             />
           </div>
@@ -238,7 +239,7 @@ export default function BuilderScreen({
               setNewStop((s) => ({ ...s, mapLink: e.target.value }));
               setMapLinkError(false);
             }}
-            placeholder="קישור למיקום בגוגל מפות"
+            placeholder="קישור למיקום בגוגל מפות" aria-label="קישור למיקום בגוגל מפות"
             dir="ltr"
           />
           {mapLinkError && (
@@ -247,27 +248,27 @@ export default function BuilderScreen({
             </span>
           )}
           <div
-            className={'small-chip' + (newStop.accessible ? ' small-chip--active' : '')}
+            className={'small-chip' + (newStop.accessible ? ' small-chip--active' : '')} aria-pressed={newStop.accessible}
             style={{ alignSelf: 'flex-start' }}
-            onClick={() => setNewStop((s) => ({ ...s, accessible: !s.accessible }))}
+            {...press(() => setNewStop((s) => ({ ...s, accessible: !s.accessible })))}
           >
             ♿ נגיש לעגלות/כיסאות גלגלים
           </div>
           <textarea
             value={newStop.note}
             onChange={(e) => setNewStop((s) => ({ ...s, note: e.target.value }))}
-            placeholder="הערה שלכם – למה כדאי לעצור פה?"
+            placeholder="הערה שלכם – למה כדאי לעצור פה?" aria-label="הערה שלכם – למה כדאי לעצור פה?"
             dir="rtl"
             rows={2}
           />
-          <div className="add-stop__submit" onClick={submitStop}>הוספה למסלול</div>
+          <div className="add-stop__submit" {...press(submitStop)}>הוספה למסלול</div>
         </div>
       </div>
 
       <div
         className="publish-btn"
         style={{ background: canPublish ? 'var(--bg-header)' : 'var(--text-inactive)' }}
-        onClick={onPublish}
+        {...press(onPublish)}
       >
         {justPublished ? (isEditing ? 'נשמר ✓' : 'פורסם ✓') : (isEditing ? 'שמירת שינויים' : 'פרסום המסלול')}
       </div>

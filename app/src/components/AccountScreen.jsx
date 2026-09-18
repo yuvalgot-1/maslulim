@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { signIn, signUp } from '../lib/accountApi.js';
+import { press } from '../utils/a11y.js';
 
 export default function AccountScreen({ session, isCreator, onSignOut, onOpenInstall, onSwitchToCreator }) {
   const [tab, setTab] = useState('signin');
@@ -47,7 +48,7 @@ export default function AccountScreen({ session, isCreator, onSignOut, onOpenIns
             המסלולים ששמרתם ♡ נשמרים בחשבון וזמינים בכל מכשיר.
           </span>
           {isCreator && (
-            <span className="link-action" onClick={onSwitchToCreator}>מעבר למצב יוצר</span>
+            <span className="link-action" {...press(onSwitchToCreator)}>מעבר למצב יוצר</span>
           )}
           <button
             type="button"
@@ -64,19 +65,19 @@ export default function AccountScreen({ session, isCreator, onSignOut, onOpenIns
             אפשר להשתמש באתר בלי חשבון. עם חשבון, המסלולים ששמרתם ♡ יישמרו בכל המכשירים שלכם.
           </span>
           <div className="chip-row" style={{ margin: 0, padding: 0 }}>
-            <div className={'chip' + (tab === 'signin' ? ' chip--active' : '')} onClick={() => { setTab('signin'); setError(''); }}>
+            <div className={'chip' + (tab === 'signin' ? ' chip--active' : '')} aria-pressed={tab === 'signin'} {...press(() => { setTab('signin'); setError(''); })}>
               התחברות
             </div>
-            <div className={'chip' + (tab === 'signup' ? ' chip--active' : '')} onClick={() => { setTab('signup'); setError(''); setInfo(''); }}>
+            <div className={'chip' + (tab === 'signup' ? ' chip--active' : '')} aria-pressed={tab === 'signup'} {...press(() => { setTab('signup'); setError(''); setInfo(''); })}>
               הרשמה
             </div>
           </div>
 
-          <div className="field">
+          <label className="field">
             <span className="field__label">אימייל</span>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" autoComplete="username" required />
-          </div>
-          <div className="field">
+          </label>
+          <label className="field">
             <span className="field__label">{tab === 'signup' ? 'סיסמה (לפחות 6 תווים)' : 'סיסמה'}</span>
             <input
               type="password"
@@ -87,7 +88,7 @@ export default function AccountScreen({ session, isCreator, onSignOut, onOpenIns
               minLength={tab === 'signup' ? 6 : undefined}
               required
             />
-          </div>
+          </label>
 
           {error && <span style={{ fontSize: 13, color: '#A4503C' }}>{error}</span>}
           {info && <span style={{ fontSize: 13, color: 'var(--link)' }}>{info}</span>}
@@ -102,7 +103,7 @@ export default function AccountScreen({ session, isCreator, onSignOut, onOpenIns
         </form>
       )}
 
-      <span className="link-action" style={{ textAlign: 'center' }} onClick={onOpenInstall}>
+      <span className="link-action" style={{ textAlign: 'center' }} {...press(onOpenInstall)}>
         איך מוסיפים את האתר למסך הבית?
       </span>
     </div>

@@ -963,3 +963,25 @@ button, input, textarea { font-family: inherit; }
 .install-steps { display: flex; flex-direction: column; gap: 8px; }
 .install-steps__title { font-weight: 700; color: var(--text-dark); }
 .install-steps ol { margin: 0; padding: 0 20px 0 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-body); }
+
+/* ---------- Keyboard focus ---------- */
+
+[role="button"]:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.image-slot[role="button"]:focus-visible { outline-offset: -4px; }
+
+.field input:focus-visible,
+.field textarea:focus-visible,
+.add-stop input:focus-visible,
+.search-row input:focus-visible {
+  box-shadow: 0 0 0 2px var(--link);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
