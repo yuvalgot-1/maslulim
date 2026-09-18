@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocalStorageState } from './hooks/useLocalStorageState.js';
+import { useLocalStorageState, moveLocalStorageValue } from './hooks/useLocalStorageState.js';
 import { INITIAL_ROUTES, INITIAL_PUBLISHED, COLLECTIONS } from './data/routes.js';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -12,6 +12,9 @@ import BuilderScreen from './components/BuilderScreen.jsx';
 const DEFAULT_DRAFT = {
   title: '',
   area: 'שרון',
+  distance: '',
+  duration: '',
+  collections: [],
   stops: [
     { name: 'בריכת המעיין', cat: 'nature', spend: 'שעה', travel: '10 דק׳ נסיעה', hours: '', note: '' },
     { name: 'קפה בשוק', cat: 'cafe', spend: '40 דק׳', travel: '', hours: '', note: '' },
@@ -58,6 +61,15 @@ export default function App() {
     setPublished((p) => ({ ...p, [id]: !p[id] }));
   }
 
+  function toggleDraftCollection(id) {
+    setDraft((d) => ({
+      ...d,
+      collections: d.collections.includes(id)
+        ? d.collections.filter((c) => c !== id)
+        : [...d.collections, id],
+    }));
+  }
+
   function addDraftStop(stop) {
     setDraft((d) => ({ ...d, stops: [...d.stops, stop] }));
   }
@@ -74,15 +86,16 @@ export default function App() {
       title: draft.title.trim() || 'מסלול ללא שם',
       area: draft.area,
       author: 'יואב',
-      distance: 'לא צוין',
-      duration: 'לא צוין',
-      collections: [],
+      distance: draft.distance.trim() || 'לא צוין',
+      duration: draft.duration.trim() || 'לא צוין',
+      collections: draft.collections,
       saves: 0,
       blurb: '',
       stops: draft.stops,
     };
     setRoutes((r) => [newRoute, ...r]);
     setPublished((p) => ({ ...p, [id]: true }));
+    moveLocalStorageValue('img:draft-cover', 'img:cover-' + id);
     setDraft(DEFAULT_DRAFT);
     setJustPublished(true);
     setTimeout(() => {
@@ -171,6 +184,9 @@ export default function App() {
               draft={draft}
               onTitleChange={(title) => setDraft((d) => ({ ...d, title }))}
               onAreaChange={(area) => setDraft((d) => ({ ...d, area }))}
+              onDistanceChange={(distance) => setDraft((d) => ({ ...d, distance }))}
+              onDurationChange={(duration) => setDraft((d) => ({ ...d, duration }))}
+              onToggleCollection={toggleDraftCollection}
               onAddStop={addDraftStop}
               onRemoveStop={removeDraftStop}
               onPublish={publishDraft}

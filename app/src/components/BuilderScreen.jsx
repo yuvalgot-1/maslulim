@@ -1,10 +1,22 @@
 import { useState } from 'react';
 import ImageSlot from './ImageSlot.jsx';
-import { AREAS, CATEGORIES } from '../data/routes.js';
+import { AREAS, CATEGORIES, COLLECTIONS } from '../data/routes.js';
 
 const EMPTY_STOP = { name: '', cat: 'nature', spend: '', travel: '', hours: '', note: '' };
+const DRAFT_COLLECTIONS = COLLECTIONS.filter((c) => c.id !== 'all');
 
-export default function BuilderScreen({ draft, onTitleChange, onAreaChange, onAddStop, onRemoveStop, onPublish, justPublished }) {
+export default function BuilderScreen({
+  draft,
+  onTitleChange,
+  onAreaChange,
+  onDistanceChange,
+  onDurationChange,
+  onToggleCollection,
+  onAddStop,
+  onRemoveStop,
+  onPublish,
+  justPublished,
+}) {
   const [newStop, setNewStop] = useState(EMPTY_STOP);
 
   const progress = draft.stops.length < 2
@@ -61,6 +73,34 @@ export default function BuilderScreen({ draft, onTitleChange, onAreaChange, onAd
           <span className="field__label">תמונת שער</span>
           <div className="cover-slot">
             <ImageSlot id="draft-cover" placeholder="גררו תמונה מהטיול" />
+          </div>
+        </div>
+        <div className="add-stop__row">
+          <input
+            value={draft.distance}
+            onChange={(e) => onDistanceChange(e.target.value)}
+            placeholder="מרחק, למשל: 18 ק״מ ממך"
+            dir="rtl"
+          />
+          <input
+            value={draft.duration}
+            onChange={(e) => onDurationChange(e.target.value)}
+            placeholder="משך, למשל: חצי יום · 3–4 שעות"
+            dir="rtl"
+          />
+        </div>
+        <div className="field">
+          <span className="field__label">מתאים ל...</span>
+          <div className="chips-wrap">
+            {DRAFT_COLLECTIONS.map((c) => (
+              <div
+                key={c.id}
+                className={'small-chip' + (draft.collections.includes(c.id) ? ' small-chip--active' : '')}
+                onClick={() => onToggleCollection(c.id)}
+              >
+                {c.label}
+              </div>
+            ))}
           </div>
         </div>
       </div>

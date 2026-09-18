@@ -584,7 +584,6 @@ button, input, textarea { font-family: inherit; }
   border: none;
 }
 .btn-primary:hover { background: var(--bg-header-hover); }
-.btn-primary:disabled { background: var(--text-inactive); cursor: default; }
 
 .btn-secondary {
   flex: 0 0 auto;

@@ -11,12 +11,14 @@ function fileToDataUrl(file) {
 }
 
 export default function ImageSlot({ id, placeholder, className, height }) {
-  const [src, setSrc] = useLocalStorageState('img:' + id, null);
+  const [tooLarge, setTooLarge] = useState(false);
+  const [src, setSrc] = useLocalStorageState('img:' + id, null, () => setTooLarge(true));
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef(null);
 
   async function handleFile(file) {
     if (!file || !file.type.startsWith('image/')) return;
+    setTooLarge(false);
     const dataUrl = await fileToDataUrl(file);
     setSrc(dataUrl);
   }
@@ -46,7 +48,9 @@ export default function ImageSlot({ id, placeholder, className, height }) {
       ) : (
         <div className="image-slot__placeholder">
           <span className="image-slot__icon">＋</span>
-          <span className="image-slot__hint">{placeholder}</span>
+          <span className="image-slot__hint">
+            {tooLarge ? 'התמונה גדולה מדי לשמירה, נסו תמונה קטנה יותר' : placeholder}
+          </span>
         </div>
       )}
     </div>

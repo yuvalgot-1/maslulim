@@ -6,7 +6,7 @@ export default function Header({ mode, onToggleMode, showSearch, query, onQuery,
     <div className="app-header">
       <div className="app-header__top">
         <div className="app-header__title">
-          <span className="app-header__title-main">מסלולים</span>
+          <span className="app-header__title-main">מיטיבי לסת</span>
           <span className="app-header__title-sub">חוויה שלמה, לא רק נקודה</span>
         </div>
         <div className="mode-toggle" onClick={onToggleMode}>
