@@ -11,10 +11,10 @@ export default function BottomNav({ mode, screen, onNavigate }) {
       ]
     : [
         { id: 'feed', label: 'גלו מסלולים', icon: 'explore' },
-        { id: 'saved', label: 'שמורים', icon: 'heart' },
         { id: 'install', label: 'התקנה', icon: 'download' },
-        { id: 'terms', label: 'תנאים', icon: 'document' },
+        { id: 'saved', label: 'שמורים', icon: 'heart', featured: true },
         { id: 'account', label: 'חשבון', icon: 'user' },
+        { id: 'terms', label: 'תנאים', icon: 'document' },
       ];
 
   return (
@@ -24,11 +24,11 @@ export default function BottomNav({ mode, screen, onNavigate }) {
         return (
           <div
             key={t.id}
-            className={'bottom-nav__item' + (active ? ' bottom-nav__item--active' : '')}
+            className={'bottom-nav__item' + (active ? ' bottom-nav__item--active' : '') + (t.featured ? ' bottom-nav__item--featured' : '')}
             aria-current={active ? 'page' : undefined}
             {...press(() => onNavigate(t.id))}
           >
-            <span className="bottom-nav__icon"><Icon name={t.icon} /></span>
+            <span className="bottom-nav__icon"><Icon name={t.icon} size={t.featured ? 28 : 22} /></span>
             <span className="bottom-nav__label">{t.label}</span>
           </div>
         );
