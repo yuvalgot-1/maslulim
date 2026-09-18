@@ -27,10 +27,27 @@ export async function removeSavedRoute(routeId) {
   if (error) throw error;
 }
 
+// Links in auth emails send people back to the site root.
+function siteUrl() {
+  return window.location.origin + window.location.pathname;
+}
+
 export async function signUp(email, password) {
-  return supabase.auth.signUp({ email, password });
+  return supabase.auth.signUp({ email, password, options: { emailRedirectTo: siteUrl() } });
 }
 
 export async function signIn(email, password) {
   return supabase.auth.signInWithPassword({ email, password });
+}
+
+export async function resendConfirmation(email) {
+  return supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: siteUrl() } });
+}
+
+export async function requestPasswordReset(email) {
+  return supabase.auth.resetPasswordForEmail(email, { redirectTo: siteUrl() });
+}
+
+export async function updatePassword(password) {
+  return supabase.auth.updateUser({ password });
 }

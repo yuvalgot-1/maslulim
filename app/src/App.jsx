@@ -14,6 +14,7 @@ import LoginScreen from './components/LoginScreen.jsx';
 import AccountScreen from './components/AccountScreen.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import InstallScreen from './components/InstallScreen.jsx';
+import RecoveryScreen from './components/RecoveryScreen.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
 
 // rarely-used screens are loaded on demand to keep the first page load small
@@ -22,6 +23,10 @@ const BuilderScreen = lazy(() => import('./components/BuilderScreen.jsx'));
 const TermsScreen = lazy(() => import('./components/TermsScreen.jsx'));
 
 const ROUTE_HASH = /^#\/route\/(.+)$/;
+
+// Read before Supabase clears the address: did the visitor arrive from a password-reset email?
+const OPENED_FOR_RECOVERY = window.location.hash.includes('type=recovery');
+const LINK_EXPIRED = /error_code=(otp_expired|access_denied)/.test(window.location.hash);
 
 const DEFAULT_DRAFT = {
   editingId: null,
@@ -42,6 +47,7 @@ export default function App() {
   const [creatorName, setCreatorName] = useState(null);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [profileId, setProfileId] = useState(null);
+  const [recovering, setRecovering] = useState(OPENED_FOR_RECOVERY);
 
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(true);
@@ -71,7 +77,8 @@ export default function App() {
       setSession(data.session);
       setAuthLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true);
       setSession(newSession);
     });
     return () => sub.subscription.unsubscribe();
@@ -86,6 +93,13 @@ export default function App() {
       .catch(() => { if (!cancelled) setCreatorName(null); });
     return () => { cancelled = true; };
   }, [userId]);
+
+  useEffect(() => {
+    if (!LINK_EXPIRED) return;
+    setToast('הקישור במייל פג תוקף. בקשו קישור חדש.');
+    setTimeout(() => setToast(''), 3500);
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }, []);
 
   useEffect(() => {
     const onPrompt = (e) => { e.preventDefault(); setInstallPrompt(e); };
@@ -407,6 +421,25 @@ export default function App() {
     );
   }
 
+  if (recovering) {
+    return (
+      <div className="app-shell-outer">
+        <div className="app-shell">
+          <RecoveryScreen
+            onDone={() => {
+              setRecovering(false);
+              setScreen('account');
+              setToast('הסיסמה נשמרה');
+              setTimeout(() => setToast(''), 2500);
+            }}
+            onCancel={() => setRecovering(false)}
+          />
+          {toast && <div className="toast">{toast}</div>}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell-outer">
       <div className="app-shell">
@@ -424,6 +457,9 @@ export default function App() {
           onStopCat={setStopCat}
           hasFilters={hasFilters}
           onReset={resetFilters}
+          signedIn={!!session}
+          accountActive={screen === 'account'}
+          onOpenAccount={() => navigate('account')}
         />
 
         <div className="app-body">

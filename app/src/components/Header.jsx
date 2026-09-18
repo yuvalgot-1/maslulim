@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { COLLECTIONS, AREAS, CATEGORIES } from '../data/routes.js';
 import { press } from '../utils/a11y.js';
+import Icon from './Icon.jsx';
 
 const AREA_FILTERS = ['all', ...AREAS];
 
@@ -18,6 +19,9 @@ export default function Header({
   onStopCat,
   hasFilters,
   onReset,
+  signedIn,
+  accountActive,
+  onOpenAccount,
 }) {
   const isCreator = mode === 'creator';
   const [areaPickerOpen, setAreaPickerOpen] = useState(false);
@@ -30,9 +34,20 @@ export default function Header({
           <span className="app-header__title-main">מיטיבי לסת</span>
           <span className="app-header__title-sub">חוויה שלמה, לא רק נקודה</span>
         </div>
-        <div className="mode-toggle" aria-label={isCreator ? 'מצב יוצר, לחצו למעבר למצב גולש' : 'מצב גולש, לחצו למעבר למצב יוצר'} {...press(onToggleMode)}>
-          <span className="mode-toggle__dot" style={{ background: isCreator ? 'var(--dot-creator)' : 'var(--dot-public)' }} />
-          <span>{isCreator ? 'מצב יוצר' : 'מצב גולש'}</span>
+        <div className="app-header__actions">
+          <button
+            type="button"
+            className={'header-btn' + (accountActive ? ' header-btn--active' : '')}
+            aria-label={signedIn ? 'החשבון שלי (מחוברים)' : 'התחברות או הרשמה'}
+            onClick={onOpenAccount}
+          >
+            <Icon name="user" size={19} />
+            {signedIn && <span className="header-btn__dot" />}
+          </button>
+          <div className="mode-toggle" aria-label={isCreator ? 'מצב יוצר, לחצו למעבר למצב גולש' : 'מצב גולש, לחצו למעבר למצב יוצר'} {...press(onToggleMode)}>
+            <span className="mode-toggle__dot" style={{ background: isCreator ? 'var(--dot-creator)' : 'var(--dot-public)' }} />
+            <span>{isCreator ? 'מצב יוצר' : 'מצב גולש'}</span>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase.js';
+import { signIn } from '../lib/accountApi.js';
+import { describeAuthError } from '../lib/authErrors.js';
+import PasswordResetForm from './PasswordResetForm.jsx';
 import { press } from '../utils/a11y.js';
 
 export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut }) {
@@ -7,15 +9,16 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!email.trim() || !password) return;
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { error } = await signIn(email.trim(), password);
     setLoading(false);
-    if (error) setError('אימייל או סיסמה שגויים');
+    if (error) setError(describeAuthError(error, 'ההתחברות נכשלה. נסו שוב.'));
   }
 
   if (signedInAs) {
@@ -38,6 +41,17 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
             </>
           )}
         </div>
+      </div>
+    );
+  }
+
+  if (resetting) {
+    return (
+      <div className="builder">
+        <div className="builder__heading">
+          <span className="builder__title">התחברות יוצר</span>
+        </div>
+        <PasswordResetForm initialEmail={email} onBack={() => setResetting(false)} />
       </div>
     );
   }
@@ -72,7 +86,7 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
           />
         </label>
 
-        {error && <span style={{ fontSize: 13, color: '#A4503C' }}>{error}</span>}
+        {error && <span role="alert" style={{ fontSize: 13, color: '#A4503C' }}>{error}</span>}
 
         <button
           type="submit"
@@ -81,6 +95,9 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
         >
           {loading ? 'מתחבר...' : 'התחברות'}
         </button>
+        <span className="link-action" style={{ textAlign: 'center' }} {...press(() => setResetting(true))}>
+          שכחתי סיסמה
+        </span>
         <span className="link-action" style={{ textAlign: 'center' }} {...press(onCancel)}>
           ביטול
         </span>

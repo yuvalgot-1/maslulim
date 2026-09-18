@@ -985,3 +985,37 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- Header account button, nav icons ---------- */
+
+.app-header__actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.header-btn {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 245, 239, .1);
+  border: 1px solid rgba(247, 245, 239, .18);
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.header-btn:hover { background: rgba(247, 245, 239, .2); }
+.header-btn--active { background: rgba(247, 245, 239, .24); }
+.header-btn__dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--dot-public);
+  border: 2px solid var(--bg-header);
+}
+
+.bottom-nav__icon { display: flex; align-items: center; justify-content: center; height: 22px; }
+.bottom-nav__icon svg { display: block; }

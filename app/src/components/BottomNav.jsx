@@ -1,17 +1,18 @@
 import { press } from '../utils/a11y.js';
+import Icon from './Icon.jsx';
 
 export default function BottomNav({ mode, screen, onNavigate }) {
   const tabs = mode === 'creator'
     ? [
-        { id: 'mine', label: 'המסלולים שלי', icon: '☰' },
-        { id: 'build', label: 'מסלול חדש', icon: '＋' },
-        { id: 'feed', label: 'תצוגה ציבורית', icon: '◎' },
-        { id: 'account', label: 'חשבון', icon: '☺' },
+        { id: 'mine', label: 'המסלולים שלי', icon: 'list' },
+        { id: 'build', label: 'מסלול חדש', icon: 'plus' },
+        { id: 'feed', label: 'תצוגה ציבורית', icon: 'explore' },
+        { id: 'account', label: 'חשבון', icon: 'user' },
       ]
     : [
-        { id: 'feed', label: 'גלו מסלולים', icon: '◎' },
-        { id: 'saved', label: 'שמורים', icon: '♡' },
-        { id: 'account', label: 'חשבון', icon: '☺' },
+        { id: 'feed', label: 'גלו מסלולים', icon: 'explore' },
+        { id: 'saved', label: 'שמורים', icon: 'heart' },
+        { id: 'account', label: 'חשבון', icon: 'user' },
       ];
 
   return (
@@ -25,7 +26,7 @@ export default function BottomNav({ mode, screen, onNavigate }) {
             aria-current={active ? 'page' : undefined}
             {...press(() => onNavigate(t.id))}
           >
-            <span className="bottom-nav__icon">{t.icon}</span>
+            <span className="bottom-nav__icon"><Icon name={t.icon} /></span>
             <span className="bottom-nav__label">{t.label}</span>
           </div>
         );
