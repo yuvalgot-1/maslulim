@@ -2,10 +2,8 @@ import ImageSlot from './ImageSlot.jsx';
 
 export default function MyRoutesScreen({ routes, published, onTogglePublish, onEdit }) {
   const pubCount = routes.filter((r) => published[r.id]).length;
-  const totalSaves = routes.reduce((a, r) => a + (published[r.id] ? r.saves : 0), 0);
   const stats = [
     { value: pubCount, label: 'מפורסמים' },
-    { value: totalSaves, label: 'שמירות' },
     { value: routes.length - pubCount, label: 'טיוטות' },
   ];
 
@@ -13,7 +11,7 @@ export default function MyRoutesScreen({ routes, published, onTogglePublish, onE
     <div className="mine">
       <div className="mine__heading">
         <span className="mine__title">המסלולים שלי</span>
-        <span className="mine__summary">{pubCount} מפורסמים · {totalSaves} שמירות</span>
+        <span className="mine__summary">{pubCount} מפורסמים · {routes.length - pubCount} טיוטות</span>
       </div>
 
       <div className="stats-row">

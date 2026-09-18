@@ -30,7 +30,6 @@ export const INITIAL_ROUTES = [
     distance: '18 ק״מ ממך',
     duration: 'יום שלם · 6–7 שעות',
     collections: ['day', 'water'],
-    saves: 312,
     blurb:
       'מתחילים על המים כשעוד קריר, ממשיכים לקפה קטן בין המטעים, ומסיימים במסעדה עם נוף לעמק. מסלול רגוע, מתאים גם למי שלא אוהב ללכת הרבה.',
     stops: [
@@ -47,7 +46,6 @@ export const INITIAL_ROUTES = [
     distance: '42 ק״מ ממך',
     duration: 'יום שלם · 5 שעות',
     collections: ['day', 'water'],
-    saves: 174,
     blurb: 'מסלול מים קצר שמסתיים בטעימות ובנוף לחרמון. אפשר לעשות את הכל ברכב אחד, בלי הליכות ארוכות.',
     stops: [
       { name: 'נחל זוויתן התחתון', cat: 'nature', spend: 'שעה וחצי', hours: '08:00–16:00', travel: '20 דק׳ נסיעה', note: 'ירידה קלה למים, נעליים שנרטבות. בקיץ המים נעימים.' },
@@ -63,7 +61,6 @@ export const INITIAL_ROUTES = [
     distance: '9 ק״מ ממך',
     duration: 'חצי יום · 3–4 שעות',
     collections: ['kids', 'day'],
-    saves: 96,
     blurb: 'מסלול קצר ושטוח שעובד גם עם עגלה, עם מתקנים באמצע וסיום שכולם מסכימים עליו.',
     stops: [
       { name: 'חניון המעגלים', cat: 'nature', spend: 'שעה', hours: 'תמיד פתוח', travel: '7 דק׳ נסיעה', note: 'שולחנות פיקניק בצל ומסלול מעגלי קצר. יש שירותים בחניון.' },
@@ -79,7 +76,6 @@ export const INITIAL_ROUTES = [
     distance: '23 ק״מ ממך',
     duration: 'אחר הצהריים · 3 שעות',
     collections: ['water'],
-    saves: 0,
     blurb: 'מסלול קצר לאחר הצהריים: צבי מים, שקיעה ודגים על הגריל. עובד מעולה גם ביום חורף בהיר.',
     stops: [
       { name: 'גשר הצבים', cat: 'nature', spend: 'שעה', hours: 'תמיד פתוח', travel: '18 דק׳ נסיעה', note: 'הצבים יוצאים לרוב אחרי הצהריים. שביל נוח לגמרי.' },

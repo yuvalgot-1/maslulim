@@ -123,7 +123,7 @@ export default function App() {
     if (isEdit) {
       setRoutes((r) => r.map((route) => (route.id === id ? { ...route, ...routeFields } : route)));
     } else {
-      setRoutes((r) => [{ id, author: 'יואב', saves: 0, blurb: '', ...routeFields }, ...r]);
+      setRoutes((r) => [{ id, author: 'יואב', blurb: '', ...routeFields }, ...r]);
       setPublished((p) => ({ ...p, [id]: true }));
       moveLocalStorageValue('img:draft-cover', 'img:cover-' + id);
     }
