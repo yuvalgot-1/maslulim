@@ -103,7 +103,11 @@ export default function BuilderScreen({
         <div className="field">
           <span className="field__label">תמונת שער</span>
           <div className="cover-slot">
-            <ImageSlot id={draft.editingId ? 'cover-' + draft.editingId : 'draft-cover'} placeholder="גררו תמונה מהטיול" />
+            <ImageSlot
+              id={draft.editingId ? 'cover-' + draft.editingId : 'draft-cover'}
+              placeholder="גררו תמונה מהטיול"
+              editable
+            />
           </div>
         </div>
         <div className="add-stop__row">
