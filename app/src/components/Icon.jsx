@@ -22,18 +22,6 @@ const PATHS = {
     </>
   ),
   plus: <path d="M12 5v14M5 12h14" />,
-  download: (
-    <>
-      <path d="M12 4v11M7.5 10.8 12 15.3l4.5-4.5" />
-      <path d="M5 19.5h14" />
-    </>
-  ),
-  document: (
-    <>
-      <path d="M7 3.5h7.2L19 8.3V20a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 7 20z" />
-      <path d="M14 3.5V8.5h5M9.5 13h6M9.5 16.5h6" />
-    </>
-  ),
 };
 
 export default function Icon({ name, size = 22 }) {

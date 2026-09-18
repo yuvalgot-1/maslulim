@@ -824,7 +824,9 @@ button, input, textarea { font-family: inherit; }
   background: rgba(247, 245, 239, .97);
   border-top: 1px solid var(--border-nav);
   display: flex;
-  padding: 8px 10px 14px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 10px;
   flex: 0 0 auto;
   backdrop-filter: blur(8px);
 }
@@ -1025,3 +1027,12 @@ a:focus-visible {
 .bottom-nav__item--featured .bottom-nav__icon { height: 28px; }
 .bottom-nav__item--featured .bottom-nav__label { font-size: 12.5px; font-weight: 800; }
 .bottom-nav__item--featured.bottom-nav__item--active { background: var(--accent-soft); }
+
+.bottom-nav__tabs { display: flex; width: 100%; }
+.bottom-nav__links {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 11.5px;
+}
+.bottom-nav__links .link-action { font-size: 11.5px; min-height: 28px; display: inline-flex; align-items: center; }
