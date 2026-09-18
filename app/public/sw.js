@@ -1,6 +1,6 @@
 // Minimal offline support: the app shell and already-viewed routes/images
 // keep working without a connection.
-const CACHE = 'maslulim-v1';
+const CACHE = 'maslulim-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -15,7 +15,8 @@ self.addEventListener('activate', (event) => {
 async function networkFirst(request) {
   const cache = await caches.open(CACHE);
   try {
-    const response = await fetch(request);
+    // 'no-cache' revalidates with the server so a new deploy shows up right away
+    const response = await fetch(request, { cache: 'no-cache' });
     if (response.ok) cache.put(request, response.clone());
     return response;
   } catch (e) {
