@@ -1022,11 +1022,17 @@ a:focus-visible {
 .bottom-nav__icon { display: flex; align-items: center; justify-content: center; height: 22px; }
 .bottom-nav__icon svg { display: block; }
 
-/* the middle tab (saved routes) is the main one */
-.bottom-nav__item--featured { flex-grow: 1.4; }
-.bottom-nav__item--featured .bottom-nav__icon { height: 28px; }
-.bottom-nav__item--featured .bottom-nav__label { font-size: 12.5px; font-weight: 800; }
-.bottom-nav__item--featured.bottom-nav__item--active { background: var(--accent-soft); }
+/* all main tabs are equal-sized green pills; the current one gets a darker outline */
+.bottom-nav__tabs { gap: 8px; }
+.bottom-nav__tabs .bottom-nav__item {
+  background: var(--accent-soft);
+  border: 1.5px solid transparent;
+  padding: 10px 4px;
+}
+.bottom-nav__tabs .bottom-nav__item--active {
+  border-color: var(--bg-header);
+  color: var(--bg-header);
+}
 
 .bottom-nav__tabs { display: flex; width: 100%; }
 .bottom-nav__links {
