@@ -1,6 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 
-export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDelete, onLogout }) {
+export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDelete, onLogout, onCoverUploaded }) {
   const pubCount = routes.filter((r) => r.published).length;
   const stats = [
     { value: pubCount, label: 'מפורסמים' },
@@ -28,7 +28,13 @@ export default function MyRoutesScreen({ routes, onTogglePublish, onEdit, onDele
         return (
           <div className="mine-card" key={r.id}>
             <div className="mine-card__thumb">
-              <ImageSlot id={'cover-' + r.id} placeholder="תמונה" editable />
+              <ImageSlot
+                id={'cover-' + r.id}
+                placeholder="תמונה"
+                editable
+                known={!!r.has_cover}
+                onUploaded={() => onCoverUploaded(r.id)}
+              />
             </div>
             <div className="mine-card__info">
               <span className="mine-card__title">{r.title}</span>

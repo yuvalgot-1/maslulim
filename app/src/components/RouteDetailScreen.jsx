@@ -5,7 +5,7 @@ import { isSafeHttpUrl } from '../utils/url.js';
 const PIN_TOP = [34, 64, 96];
 const PIN_RIGHT = [30, 46, 62];
 
-export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, onShare, editable }) {
+export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
   const facts = [
     { value: route.duration.split(' · ')[1] || route.duration, label: 'משך המסלול' },
     { value: route.stops.length, label: 'תחנות' },
@@ -15,7 +15,13 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="detail-cover">
-        <ImageSlot id={'cover-' + route.id} placeholder={'תמונת שער · ' + route.area} editable={editable} />
+        <ImageSlot
+          id={'cover-' + route.id}
+          placeholder={'תמונת שער · ' + route.area}
+          editable={editable}
+          known={!!route.has_cover}
+          onUploaded={onCoverUploaded}
+        />
         <div className="detail-cover__scrim" />
         <button className="detail-cover__back" onClick={onBack}>›</button>
         <div className="detail-cover__text">
@@ -62,7 +68,13 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
               <div className="timeline__body">
                 <div className="stop-card">
                   <div className="stop-card__photo">
-                    <ImageSlot id={'stop-' + route.id + '-' + i} placeholder={s.name} editable={editable} />
+                    <ImageSlot
+                      id={'stop-' + route.id + '-' + i}
+                      placeholder={s.name}
+                      editable={editable}
+                      known={!!s.image}
+                      onUploaded={() => onStopImageUploaded(i)}
+                    />
                     <div className="stop-card__tag" style={{ background: getCategory(s.cat).color }}>
                       {getCategory(s.cat).label}
                     </div>

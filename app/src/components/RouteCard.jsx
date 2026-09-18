@@ -4,7 +4,7 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
   return (
     <div className="route-card" onClick={() => onOpen(route.id)}>
       <div className="route-card__cover">
-        <ImageSlot id={'cover-' + route.id} placeholder={'תמונת שער · ' + route.area} />
+        <ImageSlot id={'cover-' + route.id} placeholder={'תמונת שער · ' + route.area} known={!!route.has_cover} />
         <div className="route-card__scrim" />
         <div className="route-card__cover-text">
           <span className="route-card__title">{route.title}</span>

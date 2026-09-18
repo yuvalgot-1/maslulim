@@ -147,6 +147,27 @@ export default function App() {
     await loadRoutes();
   }
 
+  async function markCoverUploaded(id) {
+    try {
+      await updateRoute(id, { has_cover: true });
+      await loadRoutes();
+    } catch {
+      // the image itself already uploaded fine - the flag is just an optimization
+    }
+  }
+
+  async function markStopImageUploaded(routeId, stopIndex) {
+    const route = routes.find((r) => r.id === routeId);
+    if (!route) return;
+    const stops = route.stops.map((s, i) => (i === stopIndex ? { ...s, image: true } : s));
+    try {
+      await updateRoute(routeId, { stops });
+      await loadRoutes();
+    } catch {
+      // the image itself already uploaded fine - the flag is just an optimization
+    }
+  }
+
   function toggleDraftCollection(id) {
     setDraft((d) => ({
       ...d,
@@ -209,10 +230,9 @@ export default function App() {
       } else {
         const id = 'custom-' + Date.now();
         await insertRoute({ id, blurb: '', published: true, ...routeFields });
-        try {
-          await supabase.storage.from('route-images').move('draft-cover', 'cover-' + id);
-        } catch {
-          // no draft cover was uploaded - nothing to move
+        const { error: moveError } = await supabase.storage.from('route-images').move('draft-cover', 'cover-' + id);
+        if (!moveError) {
+          await updateRoute(id, { has_cover: true });
         }
       }
     } catch {
@@ -327,6 +347,8 @@ export default function App() {
               onBack={() => setScreen('feed')}
               onShare={shareRoute}
               editable={creatorReady}
+              onCoverUploaded={() => markCoverUploaded(openRouteData.id)}
+              onStopImageUploaded={(i) => markStopImageUploaded(openRouteData.id, i)}
             />
           )}
 
@@ -338,6 +360,7 @@ export default function App() {
                 onEdit={startEdit}
                 onDelete={deleteRouteHandler}
                 onLogout={logout}
+                onCoverUploaded={markCoverUploaded}
               />
             ) : (
               <LoginScreen onCancel={cancelLogin} />
@@ -358,6 +381,7 @@ export default function App() {
                 onMoveStop={moveDraftStop}
                 onPublish={publishDraft}
                 onCancelEdit={cancelEdit}
+                onCoverUploaded={() => markCoverUploaded(draft.editingId)}
                 justPublished={justPublished}
               />
             ) : (

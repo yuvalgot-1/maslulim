@@ -29,6 +29,7 @@ export default function BuilderScreen({
   onMoveStop,
   onPublish,
   onCancelEdit,
+  onCoverUploaded,
   justPublished,
 }) {
   const [newStop, setNewStop] = useState(EMPTY_STOP);
@@ -107,6 +108,7 @@ export default function BuilderScreen({
               id={draft.editingId ? 'cover-' + draft.editingId : 'draft-cover'}
               placeholder="גררו תמונה מהטיול"
               editable
+              onUploaded={draft.editingId ? onCoverUploaded : undefined}
             />
           </div>
         </div>

@@ -8,11 +8,12 @@ function publicUrlFor(path) {
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
-export default function ImageSlot({ id, placeholder, className, height, editable }) {
+export default function ImageSlot({ id, placeholder, className, height, editable, known, onUploaded }) {
+  const skipLoad = known === false;
   const baseUrl = publicUrlFor(id);
   const [src, setSrc] = useState(baseUrl);
   const [loaded, setLoaded] = useState(false);
-  const [broken, setBroken] = useState(false);
+  const [broken, setBroken] = useState(skipLoad);
   const [dragOver, setDragOver] = useState(false);
   const [tooLarge, setTooLarge] = useState(false);
   const [uploadError, setUploadError] = useState(false);
@@ -22,8 +23,8 @@ export default function ImageSlot({ id, placeholder, className, height, editable
   useEffect(() => {
     setSrc(publicUrlFor(id));
     setLoaded(false);
-    setBroken(false);
-  }, [id]);
+    setBroken(skipLoad);
+  }, [id, skipLoad]);
 
   async function handleFile(file) {
     if (!editable || !file || !file.type.startsWith('image/')) return;
@@ -46,6 +47,7 @@ export default function ImageSlot({ id, placeholder, className, height, editable
     setLoaded(false);
     setBroken(false);
     setSrc(baseUrl + '?v=' + Date.now());
+    onUploaded?.();
   }
 
   const showImage = !broken;
