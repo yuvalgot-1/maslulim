@@ -24,8 +24,12 @@ export default function Header({
   onOpenAccount,
 }) {
   const isCreator = mode === 'creator';
-  const [areaPickerOpen, setAreaPickerOpen] = useState(false);
-  const [catOpen, setCatOpen] = useState(false);
+  const [open, setOpen] = useState(null);
+  const dropdowns = [
+    { key: 'area', title: 'אזור', allLabel: 'כל האזורים', value: areaFilter, options: AREA_FILTERS, labelOf: (v) => v, onPick: onAreaFilter },
+    { key: 'cat', title: 'סוג תחנה', allLabel: 'הכול', group: 'יש בדרך תחנה של', value: stopCat, options: ['all', ...Object.keys(CATEGORIES)], labelOf: (v) => CATEGORIES[v].label, onPick: onStopCat },
+    { key: 'col', title: 'סוג טיול', allLabel: 'הכול', value: collection, options: COLLECTIONS.map((c) => c.id), labelOf: (v) => COLLECTIONS.find((c) => c.id === v).label, onPick: onCollection },
+  ];
 
   return (
     <div className="app-header">
@@ -53,80 +57,49 @@ export default function Header({
 
       {showSearch && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <div className="search-row" style={{ flex: '1 1 auto' }}>
-              <span className="search-row__icon">⌕</span>
-              <input
-                value={query}
-                onChange={(e) => onQuery(e.target.value)}
-                placeholder="חפשו מסלול, מקום או אזור" aria-label="חפשו מסלול, מקום או אזור"
-                dir="rtl"
-              />
-            </div>
-            <div className="area-filter">
-              <div
-                className={'chip area-filter__btn' + (areaFilter !== 'all' ? ' chip--active' : '')}
-                aria-haspopup="true"
-                aria-expanded={areaPickerOpen}
-                {...press(() => { setCatOpen(false); setAreaPickerOpen((o) => !o); })}
-              >
-                <span>{areaFilter === 'all' ? 'אזור' : areaFilter}</span>
-                <span className="area-filter__arrow">{areaPickerOpen ? '▴' : '▾'}</span>
-              </div>
-              {areaPickerOpen && (
-                <div className="area-filter__panel">
-                  {AREA_FILTERS.map((a) => (
-                    <div
-                      key={a}
-                      className={'small-chip' + (areaFilter === a ? ' small-chip--active' : '')} aria-pressed={areaFilter === a}
-                      {...press(() => { onAreaFilter(a); setAreaPickerOpen(false); })}
-                    >
-                      {a === 'all' ? 'כל האזורים' : a}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="area-filter">
-              <div
-                className={'chip area-filter__btn' + (stopCat !== 'all' ? ' chip--active' : '')}
-                aria-haspopup="true"
-                aria-expanded={catOpen}
-                {...press(() => { setAreaPickerOpen(false); setCatOpen((o) => !o); })}
-              >
-                <span>{stopCat === 'all' ? 'סוג תחנה' : CATEGORIES[stopCat].label}</span>
-                <span className="area-filter__arrow">{catOpen ? '▴' : '▾'}</span>
-              </div>
-              {catOpen && (
-                <div className="area-filter__panel">
-                  <span className="area-filter__group">יש בדרך תחנה של</span>
-                  {['all', ...Object.keys(CATEGORIES)].map((c) => (
-                    <div
-                      key={c}
-                      className={'small-chip' + (stopCat === c ? ' small-chip--active' : '')} aria-pressed={stopCat === c}
-                      {...press(() => { onStopCat(c); setCatOpen(false); })}
-                    >
-                      {c === 'all' ? 'הכול' : CATEGORIES[c].label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          <div className="search-row">
+            <span className="search-row__icon">⌕</span>
+            <input
+              value={query}
+              onChange={(e) => onQuery(e.target.value)}
+              placeholder="חפשו מסלול, מקום או אזור" aria-label="חפשו מסלול, מקום או אזור"
+              dir="rtl"
+            />
           </div>
-          <div className="chip-row">
-            {COLLECTIONS.map((c) => (
-              <div
-                key={c.id}
-                className={'chip' + (collection === c.id ? ' chip--active' : '')} aria-pressed={collection === c.id}
-                {...press(() => onCollection(c.id))}
-              >
-                {c.label}
+          <div className="filter-row">
+            {dropdowns.map((d) => (
+              <div className="area-filter" key={d.key}>
+                <div
+                  className={'chip area-filter__btn' + (d.value !== 'all' ? ' chip--active' : '')}
+                  aria-haspopup="true"
+                  aria-expanded={open === d.key}
+                  {...press(() => setOpen((o) => (o === d.key ? null : d.key)))}
+                >
+                  <span>{d.value === 'all' ? d.title : d.labelOf(d.value)}</span>
+                  <span className="area-filter__arrow">{open === d.key ? '▴' : '▾'}</span>
+                </div>
+                {open === d.key && (
+                  <div className="area-filter__panel">
+                    {d.group && <span className="area-filter__group">{d.group}</span>}
+                    {d.options.map((o) => (
+                      <div
+                        key={o}
+                        className={'small-chip' + (d.value === o ? ' small-chip--active' : '')} aria-pressed={d.value === o}
+                        {...press(() => { d.onPick(o); setOpen(null); })}
+                      >
+                        {o === 'all' ? d.allLabel : d.labelOf(o)}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
-            {hasFilters && (
-              <div className="chip chip--reset" {...press(onReset)}>נקה סינון ✕</div>
-            )}
           </div>
+          {hasFilters && (
+            <div className="chip-row">
+              <div className="chip chip--reset" {...press(onReset)}>נקה סינון ✕</div>
+            </div>
+          )}
         </div>
       )}
     </div>

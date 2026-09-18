@@ -205,13 +205,16 @@ button, input, textarea { font-family: inherit; }
   border-color: var(--bg-header);
 }
 
-.area-filter { position: relative; flex: 0 0 auto; }
-.area-filter__btn { gap: 6px; }
+.filter-row { position: relative; display: flex; gap: 8px; }
+.area-filter { flex: 1 1 0; min-width: 0; }
+.area-filter__btn { gap: 6px; justify-content: center; }
+.area-filter__btn span:first-child { overflow: hidden; text-overflow: ellipsis; }
 .area-filter__arrow { font-size: 10px; }
 .area-filter__panel {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
+  right: 0;
   background: var(--bg-card);
   border: 1px solid var(--border-chip);
   border-radius: 14px;
@@ -220,7 +223,6 @@ button, input, textarea { font-family: inherit; }
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  width: 240px;
   z-index: 20;
 }
 
