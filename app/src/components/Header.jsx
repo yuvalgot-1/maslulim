@@ -1,6 +1,18 @@
-import { COLLECTIONS } from '../data/routes.js';
+import { COLLECTIONS, AREAS } from '../data/routes.js';
 
-export default function Header({ mode, onToggleMode, showSearch, query, onQuery, collection, onCollection }) {
+const AREA_FILTERS = ['all', ...AREAS];
+
+export default function Header({
+  mode,
+  onToggleMode,
+  showSearch,
+  query,
+  onQuery,
+  collection,
+  onCollection,
+  areaFilter,
+  onAreaFilter,
+}) {
   const isCreator = mode === 'creator';
   return (
     <div className="app-header">
@@ -34,6 +46,17 @@ export default function Header({ mode, onToggleMode, showSearch, query, onQuery,
                 onClick={() => onCollection(c.id)}
               >
                 {c.label}
+              </div>
+            ))}
+          </div>
+          <div className="chip-row">
+            {AREA_FILTERS.map((a) => (
+              <div
+                key={a}
+                className={'chip' + (areaFilter === a ? ' chip--active' : '')}
+                onClick={() => onAreaFilter(a)}
+              >
+                {a === 'all' ? 'כל האזורים' : a}
               </div>
             ))}
           </div>

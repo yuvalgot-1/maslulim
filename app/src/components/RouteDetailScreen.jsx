@@ -72,6 +72,8 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
                       <span className="stop-card__spend">⏱ {s.spend}</span>
                       {s.hours && <span className="stop-card__hours">{s.hours}</span>}
                       {s.difficulty && <span className="stop-card__hours">רמת קושי: {s.difficulty}</span>}
+                      {s.price && <span className="stop-card__hours">{s.price}</span>}
+                      {s.accessible && <span className="stop-card__hours">♿ נגיש</span>}
                     </div>
                     {s.note && <p className="stop-card__note">{s.note}</p>}
                     {s.mapLink && (

@@ -746,6 +746,9 @@ button, input, textarea { font-family: inherit; }
   background: none;
   border: none;
 }
+.draft-stop__remove:disabled { opacity: .35; cursor: default; }
+.draft-stop__reorder { flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px; }
+.draft-stop__reorder .draft-stop__remove { font-size: 14px; }
 
 .add-stop {
   background: var(--bg-card);

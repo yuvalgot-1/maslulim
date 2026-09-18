@@ -1,6 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 
-export default function MyRoutesScreen({ routes, published, onTogglePublish }) {
+export default function MyRoutesScreen({ routes, published, onTogglePublish, onEdit }) {
   const pubCount = routes.filter((r) => published[r.id]).length;
   const totalSaves = routes.reduce((a, r) => a + (published[r.id] ? r.saves : 0), 0);
   const stats = [
@@ -39,6 +39,7 @@ export default function MyRoutesScreen({ routes, published, onTogglePublish }) {
                 <span className={'badge ' + (isPub ? 'badge--published' : 'badge--draft')}>
                   {isPub ? 'מפורסם' : 'טיוטה'}
                 </span>
+                <button className="link-action" onClick={() => onEdit(r)}>עריכה</button>
                 <button className="link-action" onClick={() => onTogglePublish(r.id)}>
                   {isPub ? 'הסרה מפרסום' : 'פרסום עכשיו'}
                 </button>

@@ -10,6 +10,7 @@ import MyRoutesScreen from './components/MyRoutesScreen.jsx';
 import BuilderScreen from './components/BuilderScreen.jsx';
 
 const DEFAULT_DRAFT = {
+  editingId: null,
   title: '',
   area: 'שרון',
   distance: '',
@@ -32,6 +33,7 @@ export default function App() {
   const [openId, setOpenId] = useState(null);
   const [query, setQuery] = useState('');
   const [collection, setCollection] = useState('all');
+  const [areaFilter, setAreaFilter] = useState('all');
   const [justPublished, setJustPublished] = useState(false);
   const [toast, setToast] = useState('');
 
@@ -78,24 +80,53 @@ export default function App() {
     setDraft((d) => ({ ...d, stops: d.stops.filter((_, i) => i !== index) }));
   }
 
+  function moveDraftStop(index, dir) {
+    setDraft((d) => {
+      const target = index + dir;
+      if (target < 0 || target >= d.stops.length) return d;
+      const stops = [...d.stops];
+      [stops[index], stops[target]] = [stops[target], stops[index]];
+      return { ...d, stops };
+    });
+  }
+
+  function startEdit(route) {
+    setDraft({
+      editingId: route.id,
+      title: route.title,
+      area: route.area,
+      distance: route.distance === 'לא צוין' ? '' : route.distance,
+      duration: route.duration === 'לא צוין' ? '' : route.duration,
+      collections: route.collections,
+      stops: route.stops,
+    });
+    setScreen('build');
+  }
+
+  function cancelEdit() {
+    setDraft(DEFAULT_DRAFT);
+    setScreen('mine');
+  }
+
   function publishDraft() {
     if (draft.stops.length < 2) return;
-    const id = 'custom-' + Date.now();
-    const newRoute = {
-      id,
+    const isEdit = !!draft.editingId;
+    const id = draft.editingId || 'custom-' + Date.now();
+    const routeFields = {
       title: draft.title.trim() || 'מסלול ללא שם',
       area: draft.area,
-      author: 'יואב',
       distance: draft.distance.trim() || 'לא צוין',
       duration: draft.duration.trim() || 'לא צוין',
       collections: draft.collections,
-      saves: 0,
-      blurb: '',
       stops: draft.stops,
     };
-    setRoutes((r) => [newRoute, ...r]);
-    setPublished((p) => ({ ...p, [id]: true }));
-    moveLocalStorageValue('img:draft-cover', 'img:cover-' + id);
+    if (isEdit) {
+      setRoutes((r) => r.map((route) => (route.id === id ? { ...route, ...routeFields } : route)));
+    } else {
+      setRoutes((r) => [{ id, author: 'יואב', saves: 0, blurb: '', ...routeFields }, ...r]);
+      setPublished((p) => ({ ...p, [id]: true }));
+      moveLocalStorageValue('img:draft-cover', 'img:cover-' + id);
+    }
     setDraft(DEFAULT_DRAFT);
     setJustPublished(true);
     setTimeout(() => {
@@ -125,8 +156,9 @@ export default function App() {
     const hay = r.title + ' ' + r.area + ' ' + r.stops.map((x) => x.name).join(' ');
     const okQ = !q || hay.indexOf(q) > -1;
     const okC = collection === 'all' || r.collections.indexOf(collection) > -1;
-    return okQ && okC;
-  }), [visibleRoutes, q, collection]);
+    const okA = areaFilter === 'all' || r.area.indexOf(areaFilter) > -1;
+    return okQ && okC && okA;
+  }), [visibleRoutes, q, collection, areaFilter]);
 
   const feedTitle = q
     ? 'תוצאות חיפוש'
@@ -146,6 +178,8 @@ export default function App() {
           onQuery={setQuery}
           collection={collection}
           onCollection={setCollection}
+          areaFilter={areaFilter}
+          onAreaFilter={setAreaFilter}
         />
 
         <div className="app-body">
@@ -176,7 +210,7 @@ export default function App() {
           )}
 
           {screen === 'mine' && (
-            <MyRoutesScreen routes={routes} published={published} onTogglePublish={togglePublish} />
+            <MyRoutesScreen routes={routes} published={published} onTogglePublish={togglePublish} onEdit={startEdit} />
           )}
 
           {screen === 'build' && (
@@ -189,7 +223,9 @@ export default function App() {
               onToggleCollection={toggleDraftCollection}
               onAddStop={addDraftStop}
               onRemoveStop={removeDraftStop}
+              onMoveStop={moveDraftStop}
               onPublish={publishDraft}
+              onCancelEdit={cancelEdit}
               justPublished={justPublished}
             />
           )}
