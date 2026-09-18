@@ -1,6 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 
-export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
+export default function RouteCard({ route, stats, saved, onOpen, onToggleSave }) {
   return (
     <div className="route-card" onClick={() => onOpen(route.id)}>
       <div className="route-card__cover">
@@ -16,6 +16,13 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
           <span>{route.duration}</span>
           <span className="route-card__facts-sep">•</span>
           <span>{route.stops.length} תחנות</span>
+          {stats && (stats.ratingCount > 0 || stats.likes > 0) && (
+            <>
+              <span className="route-card__facts-sep">•</span>
+              {stats.ratingCount > 0 && <span className="route-card__rating">★ {stats.ratingAvg.toFixed(1)} ({stats.ratingCount})</span>}
+              {stats.likes > 0 && <span>👍 {stats.likes}</span>}
+            </>
+          )}
         </div>
         <div className="route-card__right">
           <div className="route-card__author">

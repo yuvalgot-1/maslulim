@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { COLLECTIONS, AREAS } from '../data/routes.js';
+import { COLLECTIONS, AREAS, CATEGORIES } from '../data/routes.js';
+
+const SORTS = [
+  { id: 'new', label: 'חדשים' },
+  { id: 'rating', label: 'דירוג גבוה' },
+  { id: 'likes', label: 'הכי אהובים' },
+];
 
 const AREA_FILTERS = ['all', ...AREAS];
 
@@ -13,9 +19,17 @@ export default function Header({
   onCollection,
   areaFilter,
   onAreaFilter,
+  sort,
+  onSort,
+  stopCat,
+  onStopCat,
+  hasFilters,
+  onReset,
 }) {
   const isCreator = mode === 'creator';
   const [areaPickerOpen, setAreaPickerOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortActive = sort !== 'new' || stopCat !== 'all';
 
   return (
     <div className="app-header">
@@ -45,7 +59,7 @@ export default function Header({
             <div className="area-filter">
               <div
                 className={'chip area-filter__btn' + (areaFilter !== 'all' ? ' chip--active' : '')}
-                onClick={() => setAreaPickerOpen((o) => !o)}
+                onClick={() => { setSortOpen(false); setAreaPickerOpen((o) => !o); }}
               >
                 <span>{areaFilter === 'all' ? 'אזור' : areaFilter}</span>
                 <span className="area-filter__arrow">{areaPickerOpen ? '▴' : '▾'}</span>
@@ -64,6 +78,39 @@ export default function Header({
                 </div>
               )}
             </div>
+            <div className="area-filter">
+              <div
+                className={'chip area-filter__btn' + (sortActive ? ' chip--active' : '')}
+                onClick={() => { setAreaPickerOpen(false); setSortOpen((o) => !o); }}
+              >
+                <span>מיון</span>
+                <span className="area-filter__arrow">{sortOpen ? '▴' : '▾'}</span>
+              </div>
+              {sortOpen && (
+                <div className="area-filter__panel">
+                  <span className="area-filter__group">מיון לפי</span>
+                  {SORTS.map((o) => (
+                    <div
+                      key={o.id}
+                      className={'small-chip' + (sort === o.id ? ' small-chip--active' : '')}
+                      onClick={() => onSort(o.id)}
+                    >
+                      {o.label}
+                    </div>
+                  ))}
+                  <span className="area-filter__group">יש בדרך תחנה של</span>
+                  {['all', ...Object.keys(CATEGORIES)].map((c) => (
+                    <div
+                      key={c}
+                      className={'small-chip' + (stopCat === c ? ' small-chip--active' : '')}
+                      onClick={() => onStopCat(c)}
+                    >
+                      {c === 'all' ? 'הכול' : CATEGORIES[c].label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <div className="chip-row">
             {COLLECTIONS.map((c) => (
@@ -75,6 +122,9 @@ export default function Header({
                 {c.label}
               </div>
             ))}
+            {hasFilters && (
+              <div className="chip chip--reset" onClick={onReset}>נקה סינון ✕</div>
+            )}
           </div>
         </div>
       )}

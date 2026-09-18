@@ -917,3 +917,70 @@ button, input, textarea { font-family: inherit; }
 
 .image-slot__icon { font-size: 20px; font-weight: 700; }
 .image-slot__hint { font-size: 11.5px; font-weight: 500; color: var(--text-muted); }
+
+/* ---------- Sort / reset / ratings ---------- */
+
+.area-filter__group {
+  flex: 1 1 100%;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+.chip--reset {
+  background: transparent;
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.route-card__rating { color: var(--dot-creator); font-weight: 700; }
+
+.reactions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-chip);
+  border-radius: 14px;
+}
+
+.reactions__stars { display: flex; flex-direction: column; gap: 4px; }
+.reactions__label { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+.reactions__row { display: flex; gap: 2px; }
+.reactions__summary { font-size: 12px; color: var(--text-faint); }
+
+.star {
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-size: 30px;
+  line-height: 1;
+  min-width: 40px;
+  min-height: 40px;
+  color: var(--border-chip);
+  cursor: pointer;
+}
+.star--on { color: var(--dot-creator); }
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--save-inactive-bg);
+  border: 1px solid var(--border-nav);
+  color: var(--text-muted);
+}
+.like-btn--on {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--bg-header);
+}
+.like-btn__count { font-weight: 600; opacity: .75; }

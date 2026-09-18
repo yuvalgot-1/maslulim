@@ -5,7 +5,7 @@ import { isSafeHttpUrl } from '../utils/url.js';
 const PIN_TOP = [34, 64, 96];
 const PIN_RIGHT = [30, 46, 62];
 
-export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
+export default function RouteDetailScreen({ route, stats, reaction, onReact, saved, onToggleSave, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
   const facts = [
     { value: route.duration.split(' · ')[1] || route.duration, label: 'משך המסלול' },
     { value: route.stops.length, label: 'תחנות' },
@@ -104,6 +104,41 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="reactions">
+          <div className="reactions__stars" role="group" aria-label="דירוג המסלול">
+            <span className="reactions__label">
+              {reaction?.rating ? 'הדירוג שלכם' : 'דרגו את המסלול'}
+            </span>
+            <div className="reactions__row">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  className={'star' + (n <= (reaction?.rating || 0) ? ' star--on' : '')}
+                  aria-label={n + ' כוכבים'}
+                  onClick={() => onReact({ rating: reaction?.rating === n ? 0 : n })}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            {stats?.ratingCount > 0 && (
+              <span className="reactions__summary">
+                ממוצע {stats.ratingAvg.toFixed(1)} · {stats.ratingCount} דירוגים
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            className={'like-btn' + (reaction?.liked ? ' like-btn--on' : '')}
+            onClick={() => onReact({ liked: !reaction?.liked })}
+          >
+            <span>👍</span>
+            <span>{reaction?.liked ? 'אהבתי' : 'אהבתי?'}</span>
+            {stats?.likes > 0 && <span className="like-btn__count">{stats.likes}</span>}
+          </button>
         </div>
 
         <div className="detail-actions">
