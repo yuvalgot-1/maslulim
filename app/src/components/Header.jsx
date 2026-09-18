@@ -46,7 +46,6 @@ export default function Header({
             onClick={onOpenAccount}
           >
             <Icon name="user" size={19} />
-            {signedIn && <span className="header-btn__dot" />}
           </button>
           <div className="mode-toggle" aria-label={isCreator ? 'מצב יוצר, לחצו למעבר למצב גולש' : 'מצב גולש, לחצו למעבר למצב יוצר'} {...press(onToggleMode)}>
             <span className="mode-toggle__dot" style={{ background: isCreator ? 'var(--dot-creator)' : 'var(--dot-public)' }} />
