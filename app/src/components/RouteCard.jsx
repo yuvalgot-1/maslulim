@@ -16,11 +16,10 @@ export default function RouteCard({ route, stats, saved, onOpen, onToggleSave })
           <span>{route.duration}</span>
           <span className="route-card__facts-sep">•</span>
           <span>{route.stops.length} תחנות</span>
-          {stats && (stats.ratingCount > 0 || stats.likes > 0) && (
+          {stats?.likes > 0 && (
             <>
               <span className="route-card__facts-sep">•</span>
-              {stats.ratingCount > 0 && <span className="route-card__rating">★ {stats.ratingAvg.toFixed(1)} ({stats.ratingCount})</span>}
-              {stats.likes > 0 && <span>👍 {stats.likes}</span>}
+              <span>👍 {stats.likes}</span>
             </>
           )}
         </div>

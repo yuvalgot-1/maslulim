@@ -933,36 +933,16 @@ button, input, textarea { font-family: inherit; }
   color: var(--text-muted);
 }
 
-.route-card__rating { color: var(--dot-creator); font-weight: 700; }
-
 .reactions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   padding: 14px 16px;
   background: var(--bg-card);
   border: 1px solid var(--border-chip);
   border-radius: 14px;
 }
-
-.reactions__stars { display: flex; flex-direction: column; gap: 4px; }
-.reactions__label { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
-.reactions__row { display: flex; gap: 2px; }
-.reactions__summary { font-size: 12px; color: var(--text-faint); }
-
-.star {
-  background: none;
-  border: none;
-  padding: 0 2px;
-  font-size: 30px;
-  line-height: 1;
-  min-width: 40px;
-  min-height: 40px;
-  color: var(--border-chip);
-  cursor: pointer;
-}
-.star--on { color: var(--dot-creator); }
 
 .like-btn {
   display: flex;

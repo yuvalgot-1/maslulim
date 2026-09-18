@@ -107,29 +107,6 @@ export default function RouteDetailScreen({ route, stats, reaction, onReact, sav
         </div>
 
         <div className="reactions">
-          <div className="reactions__stars" role="group" aria-label="דירוג המסלול">
-            <span className="reactions__label">
-              {reaction?.rating ? 'הדירוג שלכם' : 'דרגו את המסלול'}
-            </span>
-            <div className="reactions__row">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className={'star' + (n <= (reaction?.rating || 0) ? ' star--on' : '')}
-                  aria-label={n + ' כוכבים'}
-                  onClick={() => onReact({ rating: reaction?.rating === n ? 0 : n })}
-                >
-                  ★
-                </button>
-              ))}
-            </div>
-            {stats?.ratingCount > 0 && (
-              <span className="reactions__summary">
-                ממוצע {stats.ratingAvg.toFixed(1)} · {stats.ratingCount} דירוגים
-              </span>
-            )}
-          </div>
           <button
             type="button"
             className={'like-btn' + (reaction?.liked ? ' like-btn--on' : '')}

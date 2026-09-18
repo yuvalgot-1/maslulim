@@ -3,7 +3,6 @@ import { COLLECTIONS, AREAS, CATEGORIES } from '../data/routes.js';
 
 const SORTS = [
   { id: 'new', label: 'חדשים' },
-  { id: 'rating', label: 'דירוג גבוה' },
   { id: 'likes', label: 'הכי אהובים' },
 ];
 

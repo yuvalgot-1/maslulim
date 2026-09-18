@@ -328,13 +328,7 @@ export default function App() {
   const sorted = useMemo(() => {
     if (sort === 'new') return matched;
     const st = (r) => stats[r.id] || {};
-    const list = [...matched];
-    if (sort === 'rating') {
-      list.sort((a, b) => (st(b).ratingAvg || 0) - (st(a).ratingAvg || 0) || (st(b).ratingCount || 0) - (st(a).ratingCount || 0));
-    } else {
-      list.sort((a, b) => (st(b).likes || 0) - (st(a).likes || 0));
-    }
-    return list;
+    return [...matched].sort((a, b) => (st(b).likes || 0) - (st(a).likes || 0));
   }, [matched, sort, stats]);
 
   const hasFilters = !!q || collection !== 'all' || areaFilter !== 'all' || stopCat !== 'all' || sort !== 'new';
