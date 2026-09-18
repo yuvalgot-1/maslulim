@@ -8,12 +8,14 @@ export default function OnboardingModal({ onDismiss, onOpenTerms }) {
           <li>חפשו לפי אזור, קטגוריה או חיפוש חופשי.</li>
           <li>לחצו ♡ כדי לשמור מסלול למסך "שמורים" — השמירות נשמרות במכשיר הזה בלבד.</li>
         </ul>
-        <div className="publish-btn" style={{ background: 'var(--bg-header)' }} onClick={onDismiss}>
-          הבנתי, בואו נתחיל
-        </div>
-        <span className="link-action" style={{ textAlign: 'center' }} onClick={onOpenTerms}>
-          תנאי שימוש
+        <span style={{ fontSize: 12.5, color: 'var(--text-faint)', textAlign: 'center' }}>
+          בלחיצה על "מסכימ/ה, בואו נתחיל" אתם מאשרים שקראתם ומסכימים ל
+          <span className="link-action" onClick={onOpenTerms}>תנאי השימוש</span>.
+          ללא הסכמה לא ניתן להשתמש באתר.
         </span>
+        <div className="publish-btn" style={{ background: 'var(--bg-header)' }} onClick={onDismiss}>
+          מסכימ/ה, בואו נתחיל
+        </div>
       </div>
     </div>
   );

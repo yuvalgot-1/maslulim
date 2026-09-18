@@ -343,10 +343,10 @@ export default function App() {
 
         {toast && <div className="toast">{toast}</div>}
 
-        {!isCreator && !onboardingSeen && (
+        {!isCreator && !onboardingSeen && screen !== 'terms' && (
           <OnboardingModal
             onDismiss={() => setOnboardingSeen(true)}
-            onOpenTerms={() => { setOnboardingSeen(true); openTerms(); }}
+            onOpenTerms={openTerms}
           />
         )}
       </div>
