@@ -23,5 +23,4 @@ The design medium is **HTML/CSS/JS** — these are prototypes, not production co
 ## Bundle contents
 
 - `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
 - `project/` — the `Trip routes sharing app` project files (HTML prototypes, assets, components)
