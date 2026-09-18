@@ -1,9 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
 import { getCategory } from '../data/routes.js';
-import { isSafeHttpUrl } from '../utils/url.js';
-
-const PIN_TOP = [34, 64, 96];
-const PIN_RIGHT = [30, 46, 62];
+import { googleMapsUrl, wazeUrl, routeDirectionsUrl } from '../utils/maps.js';
 
 export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
   const facts = [
@@ -41,20 +38,10 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
       <div className="detail-content">
         <p className="detail-blurb">{route.blurb}</p>
 
-        <div className="map-preview">
-          <div className="map-preview__pattern" />
-          <div className="map-preview__water" />
-          {route.stops.map((s, i) => (
-            <div
-              key={i}
-              className="map-preview__pin"
-              style={{ top: PIN_TOP[i % 3] + 'px', right: PIN_RIGHT[i % 3] + '%' }}
-            >
-              {i + 1}
-            </div>
-          ))}
-          <div className="map-preview__label">תצוגת מפה · {route.area}</div>
-        </div>
+        <a className="route-nav" href={routeDirectionsUrl(route)} target="_blank" rel="noopener noreferrer">
+          <span className="route-nav__title">פתיחת כל המסלול בגוגל מפות ↗</span>
+          <span className="route-nav__sub">נסיעה דרך {route.stops.length} התחנות לפי הסדר</span>
+        </a>
 
         <div className="timeline">
           <span className="timeline__title">המסלול, תחנה אחר תחנה</span>
@@ -88,11 +75,14 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
                       {s.accessible && <span className="stop-card__hours">♿ נגיש</span>}
                     </div>
                     {s.note && <p className="stop-card__note">{s.note}</p>}
-                    {isSafeHttpUrl(s.mapLink) && (
-                      <a className="stop-card__map-link" href={s.mapLink} target="_blank" rel="noopener noreferrer">
-                        פתיחה בגוגל מפות ↗
+                    <div className="stop-card__nav">
+                      <a className="stop-card__map-link" href={googleMapsUrl(s, route.area)} target="_blank" rel="noopener noreferrer">
+                        גוגל מפות ↗
                       </a>
-                    )}
+                      <a className="stop-card__map-link" href={wazeUrl(s, route.area)} target="_blank" rel="noopener noreferrer">
+                        Waze ↗
+                      </a>
+                    </div>
                   </div>
                 </div>
                 {i < route.stops.length - 1 && s.travel && (
