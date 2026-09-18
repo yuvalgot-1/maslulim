@@ -1,5 +1,6 @@
 import ImageSlot from './ImageSlot.jsx';
-import { CATEGORIES } from '../data/routes.js';
+import { getCategory } from '../data/routes.js';
+import { isSafeHttpUrl } from '../utils/url.js';
 
 const PIN_TOP = [34, 64, 96];
 const PIN_RIGHT = [30, 46, 62];
@@ -62,8 +63,8 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
                 <div className="stop-card">
                   <div className="stop-card__photo">
                     <ImageSlot id={'stop-' + route.id + '-' + i} placeholder={s.name} />
-                    <div className="stop-card__tag" style={{ background: CATEGORIES[s.cat].color }}>
-                      {CATEGORIES[s.cat].label}
+                    <div className="stop-card__tag" style={{ background: getCategory(s.cat).color }}>
+                      {getCategory(s.cat).label}
                     </div>
                   </div>
                   <div className="stop-card__body">
@@ -76,7 +77,7 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
                       {s.accessible && <span className="stop-card__hours">♿ נגיש</span>}
                     </div>
                     {s.note && <p className="stop-card__note">{s.note}</p>}
-                    {s.mapLink && (
+                    {isSafeHttpUrl(s.mapLink) && (
                       <a className="stop-card__map-link" href={s.mapLink} target="_blank" rel="noopener noreferrer">
                         פתיחה בגוגל מפות ↗
                       </a>

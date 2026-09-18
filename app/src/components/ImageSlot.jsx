@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { useLocalStorageState } from '../hooks/useLocalStorageState.js';
 
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+
 function fileToDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -18,6 +20,10 @@ export default function ImageSlot({ id, placeholder, className, height }) {
 
   async function handleFile(file) {
     if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > MAX_FILE_BYTES) {
+      setTooLarge(true);
+      return;
+    }
     setTooLarge(false);
     const dataUrl = await fileToDataUrl(file);
     setSrc(dataUrl);

@@ -5,6 +5,10 @@ export const CATEGORIES = {
   view: { label: 'נוף', color: '#3C6A8A' },
 };
 
+export function getCategory(cat) {
+  return CATEGORIES[cat] || CATEGORIES.nature;
+}
+
 export const COLLECTIONS = [
   { id: 'all', label: 'הכול' },
   { id: 'day', label: 'טיולי יום' },

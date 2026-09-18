@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ImageSlot from './ImageSlot.jsx';
-import { AREAS, CATEGORIES, COLLECTIONS, DIFFICULTY_LEVELS } from '../data/routes.js';
+import { AREAS, CATEGORIES, COLLECTIONS, DIFFICULTY_LEVELS, getCategory } from '../data/routes.js';
+import { isSafeHttpUrl } from '../utils/url.js';
 
 const EMPTY_STOP = {
   name: '',
@@ -31,6 +32,7 @@ export default function BuilderScreen({
   justPublished,
 }) {
   const [newStop, setNewStop] = useState(EMPTY_STOP);
+  const [mapLinkError, setMapLinkError] = useState(false);
   const isEditing = !!draft.editingId;
 
   const progress = draft.stops.length < 2
@@ -39,6 +41,11 @@ export default function BuilderScreen({
 
   function submitStop() {
     if (!newStop.name.trim()) return;
+    const mapLink = newStop.mapLink.trim();
+    if (mapLink && !isSafeHttpUrl(mapLink)) {
+      setMapLinkError(true);
+      return;
+    }
     onAddStop({
       name: newStop.name.trim(),
       cat: newStop.cat,
@@ -46,12 +53,13 @@ export default function BuilderScreen({
       travel: newStop.travel,
       hours: newStop.hours,
       note: newStop.note,
-      mapLink: newStop.mapLink.trim(),
+      mapLink,
       difficulty: newStop.cat === 'nature' ? newStop.difficulty : '',
       price: newStop.price,
       accessible: newStop.accessible,
     });
     setNewStop(EMPTY_STOP);
+    setMapLinkError(false);
   }
 
   const canPublish = draft.stops.length >= 2;
@@ -137,7 +145,7 @@ export default function BuilderScreen({
             <div className="draft-stop__info">
               <span className="draft-stop__name">{d.name}</span>
               <span className="draft-stop__meta">
-                {[CATEGORIES[d.cat].label, d.difficulty, d.spend, d.travel, d.price, d.accessible ? '♿ נגיש' : '']
+                {[getCategory(d.cat).label, d.difficulty, d.spend, d.travel, d.price, d.accessible ? '♿ נגיש' : '']
                   .filter(Boolean)
                   .join(' · ')}
               </span>
@@ -226,10 +234,18 @@ export default function BuilderScreen({
           </div>
           <input
             value={newStop.mapLink}
-            onChange={(e) => setNewStop((s) => ({ ...s, mapLink: e.target.value }))}
+            onChange={(e) => {
+              setNewStop((s) => ({ ...s, mapLink: e.target.value }));
+              setMapLinkError(false);
+            }}
             placeholder="קישור למיקום בגוגל מפות"
             dir="ltr"
           />
+          {mapLinkError && (
+            <span style={{ fontSize: 12, color: '#A4503C' }}>
+              הקישור חייב להתחיל ב-http:// או https://
+            </span>
+          )}
           <div
             className={'small-chip' + (newStop.accessible ? ' small-chip--active' : '')}
             style={{ alignSelf: 'flex-start' }}
