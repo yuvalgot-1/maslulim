@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState.js';
 import { supabase } from './lib/supabase.js';
 import { fetchRoutes, insertRoute, updateRoute, deleteRoute } from './lib/routesApi.js';
-import { fetchStats, setReaction } from './lib/reactionsApi.js';
 import { COLLECTIONS } from './data/routes.js';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -39,8 +38,6 @@ export default function App() {
 
   const [saved, setSaved] = useLocalStorageState('saved', {});
   const [mode, setMode] = useLocalStorageState('mode', 'public');
-  const [reactions, setReactions] = useLocalStorageState('reactions', {});
-  const [stats, setStats] = useState({});
   const [draft, setDraft] = useLocalStorageState('draft', DEFAULT_DRAFT);
   const [onboardingSeen, setOnboardingSeen] = useLocalStorageState('onboardingSeen', false);
 
@@ -49,7 +46,6 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [collection, setCollection] = useState('all');
   const [areaFilter, setAreaFilter] = useState('all');
-  const [sort, setSort] = useState('new');
   const [stopCat, setStopCat] = useState('all');
   const [justPublished, setJustPublished] = useState(false);
   const [toast, setToast] = useState('');
@@ -84,16 +80,6 @@ export default function App() {
   useEffect(() => {
     if (!authLoading) loadRoutes();
   }, [authLoading, session, loadRoutes]);
-
-  const loadStats = useCallback(async () => {
-    try {
-      setStats(await fetchStats());
-    } catch {
-      // ratings are optional - the app works without them
-    }
-  }, []);
-
-  useEffect(() => { loadStats(); }, [loadStats]);
 
   // open a shared link (#/route/<id>) once routes have loaded
   const [linkHandled, setLinkHandled] = useState(false);
@@ -146,19 +132,6 @@ export default function App() {
 
   function openTerms() {
     setScreen('terms');
-  }
-
-  function react(routeId, change) {
-    const prev = reactions[routeId];
-    const next = { rating: 0, liked: false, ...prev, ...change };
-    setReactions((r) => ({ ...r, [routeId]: next }));
-    setReaction(routeId, next)
-      .then(loadStats)
-      .catch(() => {
-        setReactions((r) => ({ ...r, [routeId]: prev }));
-        setToast('לא הצלחנו לשמור את התגובה');
-        setTimeout(() => setToast(''), 1800);
-      });
   }
 
   function toggleSave(id) {
@@ -325,19 +298,12 @@ export default function App() {
     return okQ && okC && okA && okS;
   }), [visibleRoutes, q, collection, areaFilter, stopCat]);
 
-  const sorted = useMemo(() => {
-    if (sort === 'new') return matched;
-    const st = (r) => stats[r.id] || {};
-    return [...matched].sort((a, b) => (st(b).likes || 0) - (st(a).likes || 0));
-  }, [matched, sort, stats]);
-
-  const hasFilters = !!q || collection !== 'all' || areaFilter !== 'all' || stopCat !== 'all' || sort !== 'new';
+  const hasFilters = !!q || collection !== 'all' || areaFilter !== 'all' || stopCat !== 'all';
   function resetFilters() {
     setQuery('');
     setCollection('all');
     setAreaFilter('all');
     setStopCat('all');
-    setSort('new');
   }
 
   const feedTitle = q
@@ -383,8 +349,6 @@ export default function App() {
           onCollection={setCollection}
           areaFilter={areaFilter}
           onAreaFilter={setAreaFilter}
-          sort={sort}
-          onSort={setSort}
           stopCat={stopCat}
           onStopCat={setStopCat}
           hasFilters={hasFilters}
@@ -395,13 +359,12 @@ export default function App() {
           {screen === 'feed' && (
             <FeedScreen
               title={feedTitle}
-              count={sorted.length}
-              routes={sorted}
-              stats={stats}
+              count={matched.length}
+              routes={matched}
               saved={saved}
               onOpen={openRoute}
               onToggleSave={toggleSave}
-              empty={sorted.length === 0}
+              empty={matched.length === 0}
               onReset={hasFilters ? resetFilters : null}
               onOpenTerms={openTerms}
             />
@@ -410,7 +373,7 @@ export default function App() {
           {screen === 'terms' && <TermsScreen onBack={() => setScreen('feed')} />}
 
           {screen === 'saved' && (
-            <SavedScreen routes={savedRoutes} stats={stats} saved={saved} onOpen={openRoute} onToggleSave={toggleSave} />
+            <SavedScreen routes={savedRoutes} saved={saved} onOpen={openRoute} onToggleSave={toggleSave} />
           )}
 
           {screen === 'detail' && openRouteData && (
@@ -418,9 +381,6 @@ export default function App() {
               route={openRouteData}
               saved={!!saved[openRouteData.id]}
               onToggleSave={toggleSave}
-              stats={stats[openRouteData.id]}
-              reaction={reactions[openRouteData.id]}
-              onReact={(change) => react(openRouteData.id, change)}
               onBack={() => { clearRouteHash(); setScreen('feed'); }}
               onShare={shareRoute}
               editable={creatorReady}

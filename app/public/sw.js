@@ -54,7 +54,7 @@ self.addEventListener('fetch', (event) => {
     }
     // Cache route data only for anonymous visitors, so a logged-in creator's
     // drafts never end up in the cache that logged-out visitors could read.
-    const isData = url.pathname.startsWith('/rest/v1/routes') || url.pathname.startsWith('/rest/v1/route_stats');
+    const isData = url.pathname.startsWith('/rest/v1/routes');
     const anonymous = request.headers.get('Authorization') === 'Bearer ' + request.headers.get('apikey');
     if (isData && anonymous) event.respondWith(networkFirst(request));
   }

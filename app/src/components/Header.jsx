@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { COLLECTIONS, AREAS, CATEGORIES } from '../data/routes.js';
 
-const SORTS = [
-  { id: 'new', label: 'חדשים' },
-  { id: 'likes', label: 'הכי אהובים' },
-];
-
 const AREA_FILTERS = ['all', ...AREAS];
 
 export default function Header({
@@ -18,8 +13,6 @@ export default function Header({
   onCollection,
   areaFilter,
   onAreaFilter,
-  sort,
-  onSort,
   stopCat,
   onStopCat,
   hasFilters,
@@ -27,8 +20,7 @@ export default function Header({
 }) {
   const isCreator = mode === 'creator';
   const [areaPickerOpen, setAreaPickerOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
-  const sortActive = sort !== 'new' || stopCat !== 'all';
+  const [catOpen, setCatOpen] = useState(false);
 
   return (
     <div className="app-header">
@@ -58,7 +50,7 @@ export default function Header({
             <div className="area-filter">
               <div
                 className={'chip area-filter__btn' + (areaFilter !== 'all' ? ' chip--active' : '')}
-                onClick={() => { setSortOpen(false); setAreaPickerOpen((o) => !o); }}
+                onClick={() => { setCatOpen(false); setAreaPickerOpen((o) => !o); }}
               >
                 <span>{areaFilter === 'all' ? 'אזור' : areaFilter}</span>
                 <span className="area-filter__arrow">{areaPickerOpen ? '▴' : '▾'}</span>
@@ -79,30 +71,20 @@ export default function Header({
             </div>
             <div className="area-filter">
               <div
-                className={'chip area-filter__btn' + (sortActive ? ' chip--active' : '')}
-                onClick={() => { setAreaPickerOpen(false); setSortOpen((o) => !o); }}
+                className={'chip area-filter__btn' + (stopCat !== 'all' ? ' chip--active' : '')}
+                onClick={() => { setAreaPickerOpen(false); setCatOpen((o) => !o); }}
               >
-                <span>מיון</span>
-                <span className="area-filter__arrow">{sortOpen ? '▴' : '▾'}</span>
+                <span>{stopCat === 'all' ? 'סוג תחנה' : CATEGORIES[stopCat].label}</span>
+                <span className="area-filter__arrow">{catOpen ? '▴' : '▾'}</span>
               </div>
-              {sortOpen && (
+              {catOpen && (
                 <div className="area-filter__panel">
-                  <span className="area-filter__group">מיון לפי</span>
-                  {SORTS.map((o) => (
-                    <div
-                      key={o.id}
-                      className={'small-chip' + (sort === o.id ? ' small-chip--active' : '')}
-                      onClick={() => onSort(o.id)}
-                    >
-                      {o.label}
-                    </div>
-                  ))}
                   <span className="area-filter__group">יש בדרך תחנה של</span>
                   {['all', ...Object.keys(CATEGORIES)].map((c) => (
                     <div
                       key={c}
                       className={'small-chip' + (stopCat === c ? ' small-chip--active' : '')}
-                      onClick={() => onStopCat(c)}
+                      onClick={() => { onStopCat(c); setCatOpen(false); }}
                     >
                       {c === 'all' ? 'הכול' : CATEGORIES[c].label}
                     </div>

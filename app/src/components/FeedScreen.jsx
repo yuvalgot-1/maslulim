@@ -1,6 +1,6 @@
 import RouteCard from './RouteCard.jsx';
 
-export default function FeedScreen({ title, count, routes, stats, saved, onOpen, onToggleSave, empty, onReset, onOpenTerms }) {
+export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, empty, onReset, onOpenTerms }) {
   return (
     <div className="feed">
       <div className="feed__title-row">
@@ -9,7 +9,7 @@ export default function FeedScreen({ title, count, routes, stats, saved, onOpen,
       </div>
 
       {routes.map((r) => (
-        <RouteCard key={r.id} route={r} stats={stats[r.id]} saved={!!saved[r.id]} onOpen={onOpen} onToggleSave={onToggleSave} />
+        <RouteCard key={r.id} route={r} saved={!!saved[r.id]} onOpen={onOpen} onToggleSave={onToggleSave} />
       ))}
 
       {empty && (
