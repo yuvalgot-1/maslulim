@@ -205,6 +205,25 @@ button, input, textarea { font-family: inherit; }
   border-color: var(--bg-header);
 }
 
+.area-filter { position: relative; flex: 0 0 auto; }
+.area-filter__btn { gap: 6px; }
+.area-filter__arrow { font-size: 10px; }
+.area-filter__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-chip);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(18, 32, 27, .18);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 240px;
+  z-index: 20;
+}
+
 .small-chip {
   padding: 8px 13px;
   border-radius: 10px;
