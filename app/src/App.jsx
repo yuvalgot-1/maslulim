@@ -473,10 +473,8 @@ export default function App() {
               onOpen={openRoute}
               onToggleSave={toggleSave}
               onOpenProfile={openProfile}
-              onOpenInstall={() => setScreen('install')}
               empty={matched.length === 0}
               onReset={hasFilters ? resetFilters : null}
-              onOpenTerms={openTerms}
             />
           )}
 

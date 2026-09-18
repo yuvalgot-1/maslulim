@@ -1,7 +1,7 @@
 import RouteCard from './RouteCard.jsx';
 import { press } from '../utils/a11y.js';
 
-export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, onOpenProfile, empty, onReset, onOpenTerms, onOpenInstall }) {
+export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, onOpenProfile, empty, onReset }) {
   return (
     <div className="feed">
       <div className="feed__title-row">
@@ -19,11 +19,6 @@ export default function FeedScreen({ title, count, routes, saved, onOpen, onTogg
           {onReset && (<><br /><span className="link-action" {...press(onReset)}>נקה את כל הסינונים</span></>)}
         </div>
       )}
-
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 18, margin: '8px 0 4px' }}>
-        <span className="link-action" {...press(onOpenInstall)}>הוספה למסך הבית</span>
-        <span className="link-action" {...press(onOpenTerms)}>תנאי שימוש</span>
-      </div>
     </div>
   );
 }

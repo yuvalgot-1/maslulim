@@ -12,6 +12,8 @@ export default function BottomNav({ mode, screen, onNavigate }) {
     : [
         { id: 'feed', label: 'גלו מסלולים', icon: 'explore' },
         { id: 'saved', label: 'שמורים', icon: 'heart' },
+        { id: 'install', label: 'התקנה', icon: 'download' },
+        { id: 'terms', label: 'תנאים', icon: 'document' },
         { id: 'account', label: 'חשבון', icon: 'user' },
       ];
 
