@@ -21,7 +21,6 @@ export default function BuilderScreen({
   draft,
   onTitleChange,
   onAreaChange,
-  onDistanceChange,
   onDurationChange,
   onToggleCollection,
   onAddStop,
@@ -112,17 +111,12 @@ export default function BuilderScreen({
             />
           </div>
         </div>
-        <div className="add-stop__row">
-          <input
-            value={draft.distance}
-            onChange={(e) => onDistanceChange(e.target.value)}
-            placeholder="מרחק, למשל: 18 ק״מ ממך"
-            dir="rtl"
-          />
+        <div className="field">
+          <span className="field__label">משך</span>
           <input
             value={draft.duration}
             onChange={(e) => onDurationChange(e.target.value)}
-            placeholder="משך, למשל: חצי יום · 3–4 שעות"
+            placeholder="למשל: חצי יום · 3–4 שעות"
             dir="rtl"
           />
         </div>

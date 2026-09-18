@@ -10,7 +10,6 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
           <span className="route-card__title">{route.title}</span>
           <span className="route-card__chain">{route.stops.map((s) => s.name).join(' → ')}</span>
         </div>
-        <div className="route-card__distance">{route.distance}</div>
       </div>
       <div className="route-card__meta">
         <div className="route-card__facts">

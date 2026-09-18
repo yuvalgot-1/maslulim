@@ -18,7 +18,6 @@ const DEFAULT_DRAFT = {
   editingId: null,
   title: '',
   area: 'שרון',
-  distance: '',
   duration: '',
   collections: [],
   stops: [
@@ -200,7 +199,6 @@ export default function App() {
       editingId: route.id,
       title: route.title,
       area: route.area,
-      distance: route.distance === 'לא צוין' ? '' : route.distance,
       duration: route.duration === 'לא צוין' ? '' : route.duration,
       collections: route.collections,
       stops: route.stops,
@@ -219,7 +217,6 @@ export default function App() {
     const routeFields = {
       title: draft.title.trim() || 'מסלול ללא שם',
       area: draft.area,
-      distance: draft.distance.trim() || 'לא צוין',
       duration: draft.duration.trim() || 'לא צוין',
       collections: draft.collections,
       stops: draft.stops,
@@ -373,7 +370,6 @@ export default function App() {
                 draft={draft}
                 onTitleChange={(title) => setDraft((d) => ({ ...d, title }))}
                 onAreaChange={(area) => setDraft((d) => ({ ...d, area }))}
-                onDistanceChange={(distance) => setDraft((d) => ({ ...d, distance }))}
                 onDurationChange={(duration) => setDraft((d) => ({ ...d, duration }))}
                 onToggleCollection={toggleDraftCollection}
                 onAddStop={addDraftStop}

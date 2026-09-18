@@ -9,7 +9,6 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
   const facts = [
     { value: route.duration.split(' · ')[1] || route.duration, label: 'משך המסלול' },
     { value: route.stops.length, label: 'תחנות' },
-    { value: route.distance.replace(' ממך', ''), label: 'מרחק ממך' },
   ];
 
   return (
