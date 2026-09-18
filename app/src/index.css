@@ -1022,14 +1022,16 @@ a:focus-visible {
 .bottom-nav__icon { display: flex; align-items: center; justify-content: center; height: 22px; }
 .bottom-nav__icon svg { display: block; }
 
-/* all main tabs are equal-sized green pills; the current one gets a darker outline */
+/* equal-sized tabs; the green pill shows only on the current tab (and while pressing one) */
 .bottom-nav__tabs { gap: 8px; }
 .bottom-nav__tabs .bottom-nav__item {
-  background: var(--accent-soft);
   border: 1.5px solid transparent;
   padding: 10px 4px;
+  transition: background-color .15s, border-color .15s;
 }
+.bottom-nav__tabs .bottom-nav__item:active { background: var(--accent-soft); }
 .bottom-nav__tabs .bottom-nav__item--active {
+  background: var(--accent-soft);
   border-color: var(--bg-header);
   color: var(--bg-header);
 }
