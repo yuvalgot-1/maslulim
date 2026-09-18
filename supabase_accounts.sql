@@ -41,6 +41,8 @@ as $$
   );
 $$;
 
+alter function public.is_creator() set search_path = '';
+
 -- 2. Routes: everyone reads published ones, only creators read/write the rest --
 drop policy if exists "authenticated users can read all routes" on public.routes;
 drop policy if exists "authenticated users can insert routes" on public.routes;
