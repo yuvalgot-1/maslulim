@@ -276,7 +276,7 @@ export default function App() {
 
   const feedTitle = q
     ? 'תוצאות חיפוש'
-    : (collection === 'all' ? 'מומלץ באזור שלך' : COLLECTIONS.find((c) => c.id === collection).label);
+    : (collection === 'all' ? 'כל המסלולים' : COLLECTIONS.find((c) => c.id === collection).label);
 
   const openRouteData = routes.find((r) => r.id === openId);
   const savedRoutes = routes.filter((r) => saved[r.id]);
