@@ -1,3 +1,5 @@
+<img width="1408" height="768" alt="Gemini_Generated_Image_" src="https://github.com/user-attachments/assets/f126a199-1ecc-47cf-b01b-aee0a964146b" />
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).
