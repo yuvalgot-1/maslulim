@@ -97,18 +97,30 @@ button, input, textarea { font-family: inherit; }
   display: flex;
   align-items: baseline;
   gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .app-header__title-main {
   font-size: 22px;
   font-weight: 900;
   letter-spacing: -.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-header__title-sub {
   font-size: 12px;
   font-weight: 400;
   color: var(--text-header-subtitle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 420px) {
+  .app-header__title-sub { display: none; }
 }
 
 .mode-toggle {
@@ -124,6 +136,8 @@ button, input, textarea { font-family: inherit; }
   font-weight: 500;
   min-height: 34px;
   color: inherit;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .mode-toggle:hover { background: rgba(247, 245, 239, .2); }
