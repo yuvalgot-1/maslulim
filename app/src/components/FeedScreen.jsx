@@ -1,6 +1,6 @@
 import RouteCard from './RouteCard.jsx';
 
-export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, empty, onReset, onOpenTerms }) {
+export default function FeedScreen({ title, count, routes, saved, onOpen, onToggleSave, onOpenProfile, empty, onReset, onOpenTerms, onOpenInstall }) {
   return (
     <div className="feed">
       <div className="feed__title-row">
@@ -9,7 +9,7 @@ export default function FeedScreen({ title, count, routes, saved, onOpen, onTogg
       </div>
 
       {routes.map((r) => (
-        <RouteCard key={r.id} route={r} saved={!!saved[r.id]} onOpen={onOpen} onToggleSave={onToggleSave} />
+        <RouteCard key={r.id} route={r} saved={!!saved[r.id]} onOpen={onOpen} onToggleSave={onToggleSave} onOpenProfile={onOpenProfile} />
       ))}
 
       {empty && (
@@ -19,9 +19,10 @@ export default function FeedScreen({ title, count, routes, saved, onOpen, onTogg
         </div>
       )}
 
-      <span className="link-action" style={{ display: 'block', textAlign: 'center', margin: '8px 0 4px' }} onClick={onOpenTerms}>
-        תנאי שימוש
-      </span>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 18, margin: '8px 0 4px' }}>
+        <span className="link-action" onClick={onOpenInstall}>הוספה למסך הבית</span>
+        <span className="link-action" onClick={onOpenTerms}>תנאי שימוש</span>
+      </div>
     </div>
   );
 }

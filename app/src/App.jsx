@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState.js';
 import { supabase } from './lib/supabase.js';
 import { fetchRoutes, insertRoute, updateRoute, deleteRoute } from './lib/routesApi.js';
+import { fetchCreatorName, fetchSavedIds, addSavedRoutes, removeSavedRoute } from './lib/accountApi.js';
 import { COLLECTIONS } from './data/routes.js';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -11,6 +12,9 @@ import RouteDetailScreen from './components/RouteDetailScreen.jsx';
 import MyRoutesScreen from './components/MyRoutesScreen.jsx';
 import BuilderScreen from './components/BuilderScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
+import AccountScreen from './components/AccountScreen.jsx';
+import ProfileScreen from './components/ProfileScreen.jsx';
+import InstallScreen from './components/InstallScreen.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
 import TermsScreen from './components/TermsScreen.jsx';
 
@@ -31,6 +35,10 @@ const DEFAULT_DRAFT = {
 export default function App() {
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  // undefined = still checking, null = signed in but not an allowed creator
+  const [creatorName, setCreatorName] = useState(null);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [profileId, setProfileId] = useState(null);
 
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(true);
@@ -51,7 +59,9 @@ export default function App() {
   const [toast, setToast] = useState('');
 
   const isCreator = mode === 'creator';
-  const creatorReady = isCreator && !!session;
+  const creatorReady = isCreator && !!session && !!creatorName;
+  const userId = session?.user?.id ?? null;
+  const installed = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -62,6 +72,22 @@ export default function App() {
       setSession(newSession);
     });
     return () => sub.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!userId) { setCreatorName(null); setSyncedUser(null); return; }
+    let cancelled = false;
+    setCreatorName(undefined);
+    fetchCreatorName()
+      .then((name) => { if (!cancelled) setCreatorName(name); })
+      .catch(() => { if (!cancelled) setCreatorName(null); });
+    return () => { cancelled = true; };
+  }, [userId]);
+
+  useEffect(() => {
+    const onPrompt = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', onPrompt);
   }, []);
 
   const loadRoutes = useCallback(async () => {
@@ -80,6 +106,24 @@ export default function App() {
   useEffect(() => {
     if (!authLoading) loadRoutes();
   }, [authLoading, session, loadRoutes]);
+
+  // signed-in visitors: merge this device's saved routes into the account, then use the account's list
+  const [syncedUser, setSyncedUser] = useState(null);
+  useEffect(() => {
+    if (!userId || routesLoading || syncedUser === userId) return;
+    setSyncedUser(userId);
+    (async () => {
+      try {
+        const known = new Set(routes.map((r) => r.id));
+        const remote = await fetchSavedIds();
+        const localIds = Object.keys(saved).filter((id) => saved[id] && known.has(id));
+        await addSavedRoutes(localIds.filter((id) => !remote.includes(id)));
+        setSaved(Object.fromEntries([...new Set([...remote, ...localIds])].map((id) => [id, true])));
+      } catch {
+        // saving still works on this device even if syncing fails
+      }
+    })();
+  }, [userId, routesLoading, syncedUser, routes, saved, setSaved]);
 
   // open a shared link (#/route/<id>) once routes have loaded
   const [linkHandled, setLinkHandled] = useState(false);
@@ -106,10 +150,28 @@ export default function App() {
     setScreen('feed');
   }
 
-  async function logout() {
+  async function signOut() {
     await supabase.auth.signOut();
+    // the saved list belongs to the account - don't leave it on a shared device
+    setSaved({});
+  }
+
+  async function logout() {
+    await signOut();
     setMode('public');
     setScreen('feed');
+  }
+
+  function openProfile(ownerId) {
+    setProfileId(ownerId);
+    setScreen('profile');
+  }
+
+  async function runInstall() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
   }
 
   function openRoute(id) {
@@ -135,7 +197,14 @@ export default function App() {
   }
 
   function toggleSave(id) {
-    setSaved((s) => ({ ...s, [id]: !s[id] }));
+    const nowSaved = !saved[id];
+    setSaved((s) => ({ ...s, [id]: nowSaved }));
+    if (userId) {
+      (nowSaved ? addSavedRoutes([id]) : removeSavedRoute(id)).catch(() => {
+        setToast('השמירה בחשבון נכשלה');
+        setTimeout(() => setToast(''), 1800);
+      });
+    }
   }
 
   async function togglePublish(id) {
@@ -251,7 +320,7 @@ export default function App() {
         await updateRoute(draft.editingId, routeFields);
       } else {
         const id = 'custom-' + Date.now();
-        await insertRoute({ id, blurb: '', published: true, ...routeFields });
+        await insertRoute({ id, blurb: '', published: true, author: creatorName, ...routeFields });
         const { error: moveError } = await supabase.storage.from('route-images').move('draft-cover', 'cover-' + id);
         if (!moveError) {
           await updateRoute(id, { has_cover: true });
@@ -312,6 +381,8 @@ export default function App() {
 
   const openRouteData = routes.find((r) => r.id === openId);
   const savedRoutes = routes.filter((r) => saved[r.id]);
+  const profileRoutes = visibleRoutes.filter((r) => r.owner_id === profileId);
+  const profileName = profileRoutes[0]?.author || '';
 
   if (authLoading || (routesLoading && routes.length === 0 && !routesError)) {
     return (
@@ -364,6 +435,8 @@ export default function App() {
               saved={saved}
               onOpen={openRoute}
               onToggleSave={toggleSave}
+              onOpenProfile={openProfile}
+              onOpenInstall={() => setScreen('install')}
               empty={matched.length === 0}
               onReset={hasFilters ? resetFilters : null}
               onOpenTerms={openTerms}
@@ -372,8 +445,38 @@ export default function App() {
 
           {screen === 'terms' && <TermsScreen onBack={() => setScreen('feed')} />}
 
+          {screen === 'install' && (
+            <InstallScreen
+              onBack={() => setScreen('feed')}
+              installPrompt={installPrompt}
+              onInstall={runInstall}
+              installed={installed}
+            />
+          )}
+
+          {screen === 'account' && (
+            <AccountScreen
+              session={session}
+              isCreator={!!creatorName}
+              onSignOut={signOut}
+              onOpenInstall={() => setScreen('install')}
+              onSwitchToCreator={() => { setMode('creator'); setScreen('mine'); }}
+            />
+          )}
+
+          {screen === 'profile' && (
+            <ProfileScreen
+              name={profileName}
+              routes={profileRoutes}
+              saved={saved}
+              onOpen={openRoute}
+              onToggleSave={toggleSave}
+              onBack={() => setScreen('feed')}
+            />
+          )}
+
           {screen === 'saved' && (
-            <SavedScreen routes={savedRoutes} saved={saved} onOpen={openRoute} onToggleSave={toggleSave} />
+            <SavedScreen routes={savedRoutes} saved={saved} onOpen={openRoute} onToggleSave={toggleSave} onOpenProfile={openProfile} />
           )}
 
           {screen === 'detail' && openRouteData && (
@@ -381,6 +484,7 @@ export default function App() {
               route={openRouteData}
               saved={!!saved[openRouteData.id]}
               onToggleSave={toggleSave}
+              onOpenProfile={openProfile}
               onBack={() => { clearRouteHash(); setScreen('feed'); }}
               onShare={shareRoute}
               editable={creatorReady}
@@ -400,7 +504,7 @@ export default function App() {
                 onCoverUploaded={markCoverUploaded}
               />
             ) : (
-              <LoginScreen onCancel={cancelLogin} />
+              <LoginScreen onCancel={cancelLogin} signedInAs={session?.user?.email} checking={creatorName === undefined} onSignOut={logout} />
             )
           )}
 
@@ -421,7 +525,7 @@ export default function App() {
                 justPublished={justPublished}
               />
             ) : (
-              <LoginScreen onCancel={cancelLogin} />
+              <LoginScreen onCancel={cancelLogin} signedInAs={session?.user?.email} checking={creatorName === undefined} onSignOut={logout} />
             )
           )}
         </div>

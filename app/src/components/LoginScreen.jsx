@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 
-export default function LoginScreen({ onCancel }) {
+export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,6 +15,30 @@ export default function LoginScreen({ onCancel }) {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) setError('אימייל או סיסמה שגויים');
+  }
+
+  if (signedInAs) {
+    return (
+      <div className="builder">
+        <div className="builder__heading">
+          <span className="builder__title">מצב יוצר</span>
+        </div>
+        <div className="builder-card" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {checking ? (
+            <span>בודק הרשאות...</span>
+          ) : (
+            <>
+              <span>
+                החשבון <b dir="ltr">{signedInAs}</b> אינו מורשה ליצור מסלולים.
+                מצב יוצר פתוח כרגע רק ליוצרים שאושרו.
+              </span>
+              <span className="link-action" onClick={onCancel}>חזרה לגלישה</span>
+              <span className="link-action" onClick={onSignOut}>התנתקות</span>
+            </>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (

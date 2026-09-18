@@ -1,6 +1,13 @@
 import ImageSlot from './ImageSlot.jsx';
+import { CATEGORIES, COLLECTIONS, getCategory } from '../data/routes.js';
 
-export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
+function categoryCounts(stops) {
+  const counts = {};
+  for (const s of stops) counts[s.cat] = (counts[s.cat] || 0) + 1;
+  return Object.keys(CATEGORIES).filter((c) => counts[c]).map((c) => ({ cat: c, count: counts[c] }));
+}
+
+export default function RouteCard({ route, saved, onOpen, onToggleSave, onOpenProfile }) {
   return (
     <div className="route-card" onClick={() => onOpen(route.id)}>
       <div className="route-card__cover">
@@ -11,6 +18,18 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
           <span className="route-card__chain">{route.stops.map((s) => s.name).join(' → ')}</span>
         </div>
       </div>
+      <div className="route-card__tags">
+        {categoryCounts(route.stops).map(({ cat, count }) => (
+          <span className="route-card__tag" key={cat} style={{ color: getCategory(cat).color, borderColor: getCategory(cat).color }}>
+            {getCategory(cat).icon} {getCategory(cat).label}{count > 1 ? ' ×' + count : ''}
+          </span>
+        ))}
+        {route.collections.filter((c) => COLLECTIONS.some((x) => x.id === c)).map((c) => (
+          <span className="route-card__tag route-card__tag--plain" key={c}>
+            {COLLECTIONS.find((x) => x.id === c).label}
+          </span>
+        ))}
+      </div>
       <div className="route-card__meta">
         <div className="route-card__facts">
           <span>{route.duration}</span>
@@ -18,7 +37,10 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave }) {
           <span>{route.stops.length} תחנות</span>
         </div>
         <div className="route-card__right">
-          <div className="route-card__author">
+          <div
+            className={'route-card__author' + (onOpenProfile ? ' route-card__author--link' : '')}
+            onClick={onOpenProfile ? (e) => { e.stopPropagation(); onOpenProfile(route.owner_id); } : undefined}
+          >
             <span className="route-card__initials">{route.author.slice(0, 1)}</span>
             <span>{route.author}</span>
           </div>

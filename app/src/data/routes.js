@@ -1,8 +1,8 @@
 export const CATEGORIES = {
-  nature: { label: 'טבע', color: '#2E6B4F' },
-  cafe: { label: 'קפה', color: '#8A6A3C' },
-  food: { label: 'אוכל', color: '#A4503C' },
-  view: { label: 'נוף', color: '#3C6A8A' },
+  nature: { label: 'טבע', icon: '🌿', color: '#2E6B4F' },
+  cafe: { label: 'קפה', icon: '☕', color: '#8A6A3C' },
+  food: { label: 'אוכל', icon: '🍽️', color: '#A4503C' },
+  view: { label: 'נוף', icon: '🏞️', color: '#3C6A8A' },
 };
 
 export function getCategory(cat) {

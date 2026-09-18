@@ -2,7 +2,7 @@ import ImageSlot from './ImageSlot.jsx';
 import { getCategory } from '../data/routes.js';
 import { googleMapsUrl, wazeUrl, routeDirectionsUrl } from '../utils/maps.js';
 
-export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
+export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenProfile, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
   const facts = [
     { value: route.duration.split(' · ')[1] || route.duration, label: 'משך המסלול' },
     { value: route.stops.length, label: 'תחנות' },
@@ -36,7 +36,11 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
       </div>
 
       <div className="detail-content">
-        <p className="detail-blurb">{route.blurb}</p>
+        <div className="detail-author" onClick={() => onOpenProfile(route.owner_id)}>
+          <span className="route-card__initials">{route.author.slice(0, 1)}</span>
+          <span>מאת <b>{route.author}</b> · כל המסלולים ›</span>
+        </div>
+        {route.blurb && <p className="detail-blurb">{route.blurb}</p>}
 
         <a className="route-nav" href={routeDirectionsUrl(route)} target="_blank" rel="noopener noreferrer">
           <span className="route-nav__title">פתיחת כל המסלול בגוגל מפות ↗</span>

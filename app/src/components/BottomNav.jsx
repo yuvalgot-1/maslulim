@@ -8,12 +8,13 @@ export default function BottomNav({ mode, screen, onNavigate }) {
     : [
         { id: 'feed', label: 'גלו מסלולים', icon: '◎' },
         { id: 'saved', label: 'שמורים', icon: '♡' },
+        { id: 'account', label: 'חשבון', icon: '☺' },
       ];
 
   return (
     <div className="bottom-nav">
       {tabs.map((t) => {
-        const active = screen === t.id || (t.id === 'feed' && screen === 'detail');
+        const active = screen === t.id || (t.id === 'feed' && (screen === 'detail' || screen === 'profile'));
         return (
           <div
             key={t.id}
