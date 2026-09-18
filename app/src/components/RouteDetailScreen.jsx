@@ -71,8 +71,14 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onBack, 
                     <div className="stop-card__tags">
                       <span className="stop-card__spend">⏱ {s.spend}</span>
                       {s.hours && <span className="stop-card__hours">{s.hours}</span>}
+                      {s.difficulty && <span className="stop-card__hours">רמת קושי: {s.difficulty}</span>}
                     </div>
                     {s.note && <p className="stop-card__note">{s.note}</p>}
+                    {s.mapLink && (
+                      <a className="stop-card__map-link" href={s.mapLink} target="_blank" rel="noopener noreferrer">
+                        פתיחה בגוגל מפות ↗
+                      </a>
+                    )}
                   </div>
                 </div>
                 {i < route.stops.length - 1 && s.travel && (

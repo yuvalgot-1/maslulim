@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ImageSlot from './ImageSlot.jsx';
-import { AREAS, CATEGORIES, COLLECTIONS } from '../data/routes.js';
+import { AREAS, CATEGORIES, COLLECTIONS, DIFFICULTY_LEVELS } from '../data/routes.js';
 
-const EMPTY_STOP = { name: '', cat: 'nature', spend: '', travel: '', hours: '', note: '' };
+const EMPTY_STOP = { name: '', cat: 'nature', spend: '', travel: '', hours: '', note: '', mapLink: '', difficulty: '' };
 const DRAFT_COLLECTIONS = COLLECTIONS.filter((c) => c.id !== 'all');
 
 export default function BuilderScreen({
@@ -32,6 +32,8 @@ export default function BuilderScreen({
       travel: newStop.travel,
       hours: newStop.hours,
       note: newStop.note,
+      mapLink: newStop.mapLink.trim(),
+      difficulty: newStop.cat === 'nature' ? newStop.difficulty : '',
     });
     setNewStop(EMPTY_STOP);
   }
@@ -114,7 +116,7 @@ export default function BuilderScreen({
             <div className="draft-stop__info">
               <span className="draft-stop__name">{d.name}</span>
               <span className="draft-stop__meta">
-                {[CATEGORIES[d.cat].label, d.spend, d.travel].filter(Boolean).join(' · ')}
+                {[CATEGORIES[d.cat].label, d.difficulty, d.spend, d.travel].filter(Boolean).join(' · ')}
               </span>
             </div>
             <button className="draft-stop__remove" onClick={() => onRemoveStop(i)}>×</button>
@@ -140,6 +142,19 @@ export default function BuilderScreen({
               </div>
             ))}
           </div>
+          {newStop.cat === 'nature' && (
+            <div className="chips-wrap">
+              {DIFFICULTY_LEVELS.map((level) => (
+                <div
+                  key={level}
+                  className={'small-chip' + (newStop.difficulty === level ? ' small-chip--active' : '')}
+                  onClick={() => setNewStop((s) => ({ ...s, difficulty: level }))}
+                >
+                  {level}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="add-stop__row">
             <input
               value={newStop.spend}
@@ -159,6 +174,12 @@ export default function BuilderScreen({
             onChange={(e) => setNewStop((s) => ({ ...s, hours: e.target.value }))}
             placeholder="שעות פתיחה"
             dir="rtl"
+          />
+          <input
+            value={newStop.mapLink}
+            onChange={(e) => setNewStop((s) => ({ ...s, mapLink: e.target.value }))}
+            placeholder="קישור למיקום בגוגל מפות"
+            dir="ltr"
           />
           <textarea
             value={newStop.note}

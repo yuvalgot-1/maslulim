@@ -13,7 +13,9 @@ export const COLLECTIONS = [
   { id: 'rain', label: 'יום גשום' },
 ];
 
-export const AREAS = ['גליל', 'גולן', 'מרכז', 'שרון', 'ירושלים', 'נגב'];
+export const AREAS = ['גליל', 'גולן', 'מרכז', 'שרון', 'ירושלים', 'נגב', 'אילת'];
+
+export const DIFFICULTY_LEVELS = ['קל', 'בינוני', 'קשה'];
 
 export const INITIAL_ROUTES = [
   {
