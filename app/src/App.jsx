@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorageState } from './hooks/useLocalStorageState.js';
 import { supabase } from './lib/supabase.js';
+import { stopImagePath } from './utils/url.js';
 import { fetchRoutes, insertRoute, updateRoute, deleteRoute } from './lib/routesApi.js';
 import { fetchCreatorName, fetchSavedIds, addSavedRoutes, removeSavedRoute } from './lib/accountApi.js';
 import { COLLECTIONS } from './data/routes.js';
@@ -250,7 +251,7 @@ export default function App() {
       return;
     }
     try {
-      const imagePaths = ['cover-' + id, ...route.stops.map((_, i) => 'stop-' + id + '-' + i)];
+      const imagePaths = ['cover-' + id, ...route.stops.map((s, i) => stopImagePath(id, s, i))];
       await supabase.storage.from('route-images').remove(imagePaths);
     } catch {
       // route is already deleted - leftover images are harmless
@@ -293,6 +294,10 @@ export default function App() {
   }
 
   function removeDraftStop(index) {
+    const removed = draft.stops[index];
+    if (removed?.draftImage) {
+      supabase.storage.from('route-images').remove(['draft-stop-' + removed.draftImage]).catch(() => {});
+    }
     setDraft((d) => ({ ...d, stops: d.stops.filter((_, i) => i !== index) }));
   }
 
@@ -313,7 +318,7 @@ export default function App() {
       area: route.area,
       duration: route.duration === 'לא צוין' ? '' : route.duration,
       collections: route.collections,
-      stops: route.stops,
+      stops: route.stops.map((s, i) => (s.image && !s.imgId ? { ...s, legacyPath: 'stop-' + route.id + '-' + i } : s)),
     });
     setScreen('build');
   }
@@ -326,18 +331,27 @@ export default function App() {
   async function publishDraft() {
     if (draft.stops.length < 2) return;
     const isEdit = !!draft.editingId;
+    const routeId = isEdit ? draft.editingId : 'custom-' + Date.now();
+    const bucket = supabase.storage.from('route-images');
+    const stops = await Promise.all(draft.stops.map(async (stop) => {
+      const { draftImage, legacyPath, ...rest } = stop;
+      const imgId = draftImage || (legacyPath && Date.now() + '-' + Math.random().toString(36).slice(2, 8));
+      if (!imgId) return rest;
+      const { error } = await bucket.move(draftImage ? 'draft-stop-' + draftImage : legacyPath, 'stop-img-' + imgId);
+      return error ? { ...rest, image: false } : { ...rest, image: true, imgId };
+    }));
     const routeFields = {
       title: draft.title.trim() || 'מסלול ללא שם',
       area: draft.area,
       duration: draft.duration.trim() || 'לא צוין',
       collections: draft.collections,
-      stops: draft.stops,
+      stops,
     };
     try {
       if (isEdit) {
         await updateRoute(draft.editingId, routeFields);
       } else {
-        const id = 'custom-' + Date.now();
+        const id = routeId;
         await insertRoute({ id, blurb: '', published: true, author: creatorName, ...routeFields });
         const { error: moveError } = await supabase.storage.from('route-images').move('draft-cover', 'cover-' + id);
         if (!moveError) {

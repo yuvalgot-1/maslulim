@@ -4,7 +4,9 @@ import { AREAS, CATEGORIES, COLLECTIONS, DIFFICULTY_LEVELS, getCategory } from '
 import { isSafeHttpUrl } from '../utils/url.js';
 import { press } from '../utils/a11y.js';
 
-const EMPTY_STOP = {
+const newEmptyStop = () => ({
+  imgKey: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+  hasImage: false,
   name: '',
   cat: 'nature',
   spend: '',
@@ -15,7 +17,7 @@ const EMPTY_STOP = {
   difficulty: '',
   price: '',
   accessible: false,
-};
+});
 const DRAFT_COLLECTIONS = COLLECTIONS.filter((c) => c.id !== 'all');
 
 export default function BuilderScreen({
@@ -32,7 +34,7 @@ export default function BuilderScreen({
   onCoverUploaded,
   justPublished,
 }) {
-  const [newStop, setNewStop] = useState(EMPTY_STOP);
+  const [newStop, setNewStop] = useState(newEmptyStop);
   const [mapLinkError, setMapLinkError] = useState(false);
   const isEditing = !!draft.editingId;
 
@@ -58,8 +60,9 @@ export default function BuilderScreen({
       difficulty: newStop.cat === 'nature' ? newStop.difficulty : '',
       price: newStop.price,
       accessible: newStop.accessible,
+      ...(newStop.hasImage ? { draftImage: newStop.imgKey } : {}),
     });
-    setNewStop(EMPTY_STOP);
+    setNewStop(newEmptyStop());
     setMapLinkError(false);
   }
 
@@ -146,7 +149,7 @@ export default function BuilderScreen({
             <div className="draft-stop__info">
               <span className="draft-stop__name">{d.name}</span>
               <span className="draft-stop__meta">
-                {[getCategory(d.cat).label, d.difficulty, d.spend, d.travel, d.price, d.accessible ? '♿ נגיש' : '']
+                {[getCategory(d.cat).label, d.difficulty, d.spend, d.travel, d.price, d.accessible ? '♿ נגיש' : '', d.draftImage || d.image ? '📷 עם תמונה' : '']
                   .filter(Boolean)
                   .join(' · ')}
               </span>
@@ -181,6 +184,14 @@ export default function BuilderScreen({
             placeholder="שם המקום" aria-label="שם המקום"
             dir="rtl"
           />
+          <div className="cover-slot">
+            <ImageSlot
+              id={'draft-stop-' + newStop.imgKey}
+              placeholder="תמונה לתחנה (לא חובה)" aria-label="תמונה לתחנה (לא חובה)"
+              editable
+              onUploaded={() => setNewStop((s) => ({ ...s, hasImage: true }))}
+            />
+          </div>
           <div className="chips-wrap">
             {Object.keys(CATEGORIES).map((k) => (
               <div

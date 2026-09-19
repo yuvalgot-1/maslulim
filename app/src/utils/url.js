@@ -7,3 +7,9 @@ export function isSafeHttpUrl(value) {
     return false;
   }
 }
+
+// Stops with an imgId keep their photo under that id, so reordering or deleting
+// stops can't shift photos between them. Older stops use their position.
+export function stopImagePath(routeId, stop, index) {
+  return stop.imgId ? 'stop-img-' + stop.imgId : 'stop-' + routeId + '-' + index;
+}

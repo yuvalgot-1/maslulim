@@ -1,6 +1,7 @@
 import ImageSlot from './ImageSlot.jsx';
 import { getCategory } from '../data/routes.js';
 import { googleMapsUrl, wazeUrl, routeDirectionsUrl } from '../utils/maps.js';
+import { stopImagePath } from '../utils/url.js';
 import { press } from '../utils/a11y.js';
 
 export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenProfile, onBack, onShare, editable, onCoverUploaded, onStopImageUploaded }) {
@@ -60,7 +61,7 @@ export default function RouteDetailScreen({ route, saved, onToggleSave, onOpenPr
                 <div className="stop-card">
                   <div className="stop-card__photo">
                     <ImageSlot
-                      id={'stop-' + route.id + '-' + i}
+                      id={stopImagePath(route.id, s, i)}
                       placeholder={s.name}
                       editable={editable}
                       known={!!s.image}
