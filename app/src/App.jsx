@@ -90,9 +90,22 @@ export default function App() {
     if (!userId) { setCreatorName(null); setSyncedUser(null); return; }
     let cancelled = false;
     setCreatorName(undefined);
-    fetchCreatorName()
-      .then((name) => { if (!cancelled) setCreatorName(name); })
-      .catch(() => { if (!cancelled) setCreatorName(null); });
+    // Right after the app opens (or resumes) the request can fail or come back empty
+    // before the session/network is ready, so retry a few times before deciding
+    // the account is not an allowed creator.
+    (async () => {
+      let name = null;
+      for (let attempt = 0; attempt < 4 && !cancelled; attempt++) {
+        if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 800 * attempt));
+        try {
+          name = await fetchCreatorName();
+        } catch {
+          name = null;
+        }
+        if (name) break;
+      }
+      if (!cancelled) setCreatorName(name);
+    })();
     return () => { cancelled = true; };
   }, [userId]);
 
