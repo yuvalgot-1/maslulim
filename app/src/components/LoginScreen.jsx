@@ -60,6 +60,7 @@ export default function LoginScreen({ onCancel, signedInAs, checking, onSignOut 
     <div className="builder">
       <div className="builder__heading">
         <span className="builder__title">התחברות יוצר</span>
+        <span className="builder__progress">מצב יוצר פתוח כרגע רק לאנשים נבחרים</span>
       </div>
 
       <form className="builder-card" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
