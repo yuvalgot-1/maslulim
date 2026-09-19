@@ -2,6 +2,14 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
+import '@fontsource/heebo/hebrew-400.css';
+import '@fontsource/heebo/latin-400.css';
+import '@fontsource/heebo/hebrew-500.css';
+import '@fontsource/heebo/latin-500.css';
+import '@fontsource/heebo/hebrew-700.css';
+import '@fontsource/heebo/latin-700.css';
+import '@fontsource/heebo/hebrew-900.css';
+import '@fontsource/heebo/latin-900.css';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(

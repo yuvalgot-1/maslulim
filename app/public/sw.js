@@ -1,6 +1,6 @@
 // Minimal offline support: the app shell and already-viewed routes/images
 // keep working without a connection.
-const CACHE = 'maslulim-v3';
+const CACHE = 'maslulim-v4';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -26,6 +26,16 @@ async function networkFirst(request) {
   }
 }
 
+// Build output is content-hashed (a changed file gets a new name), so a cached copy never goes stale.
+async function cacheFirst(request) {
+  const cache = await caches.open(CACHE);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok) cache.put(request, response.clone());
+  return response;
+}
+
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(request);
@@ -44,7 +54,10 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin === self.location.origin) {
-    event.respondWith(request.mode === 'navigate' ? networkFirst(request) : staleWhileRevalidate(request));
+    const hashed = url.pathname.includes('/assets/');
+    event.respondWith(
+      request.mode === 'navigate' ? networkFirst(request) : hashed ? cacheFirst(request) : staleWhileRevalidate(request)
+    );
     return;
   }
 
