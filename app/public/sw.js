@@ -1,6 +1,6 @@
 // Minimal offline support: the app shell and already-viewed routes/images
 // keep working without a connection.
-const CACHE = 'maslulim-v2';
+const CACHE = 'maslulim-v3';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -50,7 +50,9 @@ self.addEventListener('fetch', (event) => {
 
   if (url.hostname.endsWith('.supabase.co')) {
     if (url.pathname.startsWith('/storage/v1/object/public/')) {
-      event.respondWith(staleWhileRevalidate(request));
+      // Photos are replaced in place (same URL), so revalidate instead of
+      // serving the old copy first; the cache is only the offline fallback.
+      event.respondWith(networkFirst(request));
       return;
     }
     // Cache route data only for anonymous visitors, so a logged-in creator's
