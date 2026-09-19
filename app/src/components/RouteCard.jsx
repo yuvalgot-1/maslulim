@@ -16,7 +16,7 @@ export default function RouteCard({ route, saved, onOpen, onToggleSave, onOpenPr
         <div className="route-card__scrim" />
         <div className="route-card__cover-text">
           <span className="route-card__title">{route.title}</span>
-          <span className="route-card__chain">{route.stops.map((s) => s.name).join(' → ')}</span>
+          <span className="route-card__chain">{route.stops.map((s) => s.name).join(' ← ')}</span>
         </div>
       </div>
       <div className="route-card__tags">
